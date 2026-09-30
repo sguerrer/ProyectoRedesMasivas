@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>168 horas: la vida de Juan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,300..900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#E6ECF1; --ink:#16213A; --soft:#5B6780; --line:rgba(22,33,58,.16); --panel:rgba(255,255,255,.66);
+  --badge:#E0322A; --good:#128A55; --info:#2F66E0; --warn:#B86E00; --phone:#1A2238;
+  --font:"Anybody","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1422; --ink:#E6ECF4; --soft:#8B96AD; --line:rgba(230,236,244,.14); --panel:rgba(30,40,62,.72);
+    --badge:#FF5A4F; --good:#45D38C; --info:#6EA0FF; --warn:#FFB547; --phone:#2B3551; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1422; --ink:#E6ECF4; --soft:#8B96AD; --line:rgba(230,236,244,.14); --panel:rgba(30,40,62,.72);
+  --badge:#FF5A4F; --good:#45D38C; --info:#6EA0FF; --warn:#FFB547; --phone:#2B3551; color-scheme:dark;
+}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  height:100%; margin:0; overflow:hidden;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--font); font-stretch:100%;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color 1.1s ease, color 1.1s ease;
+  --path:var(--info);
+}
+body[data-path="bad"]{--path:var(--badge)}
+body[data-path="mid"]{--path:var(--warn)}
+body[data-path="good"]{--path:var(--good)}
+
+/* El cielo cambia con la hora del día de Juan */
+body[data-sky="dawn"]{--bg:#2C2A58; --ink:#F1EEFF; --soft:#A9A4D6; --line:rgba(241,238,255,.18); --panel:rgba(255,255,255,.1)}
+body[data-sky="morning"]{--bg:#FFDDBF; --ink:#2A1E3A; --soft:#7A5E63; --line:rgba(42,30,58,.16); --panel:rgba(255,255,255,.6)}
+body[data-sky="noon"]{--bg:#CBE6FF; --ink:#0E2B4D; --soft:#4A6788; --line:rgba(14,43,77,.16); --panel:rgba(255,255,255,.62)}
+body[data-sky="afternoon"]{--bg:#FFD37E; --ink:#3A2300; --soft:#7A5A22; --line:rgba(58,35,0,.16); --panel:rgba(255,255,255,.55)}
+body[data-sky="dusk"]{--bg:#4A3F8A; --ink:#F3EFFF; --soft:#C1B8EC; --line:rgba(243,239,255,.2); --panel:rgba(255,255,255,.12)}
+body[data-sky="night"]{--bg:#141B34; --ink:#E4E9FF; --soft:#8E98C2; --line:rgba(228,233,255,.14); --panel:rgba(255,255,255,.08)}
+body[data-sky="late"]{--bg:#05060C; --ink:#C8D2FF; --soft:#6D78A6; --line:rgba(200,210,255,.12); --panel:rgba(255,255,255,.06)}
+body[data-sky="overcast"]{--bg:#C7CCD3; --ink:#1C2028; --soft:#5E6570; --line:rgba(28,32,40,.16); --panel:rgba(255,255,255,.5)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body[data-sky="morning"]{--bg:#3A2A33; --ink:#FFDDBF; --soft:#C49C8E; --line:rgba(255,221,191,.16); --panel:rgba(255,255,255,.08)}
+  :root:not([data-theme="light"]) body[data-sky="noon"]{--bg:#132C48; --ink:#CBE6FF; --soft:#7FA2C6; --line:rgba(203,230,255,.16); --panel:rgba(255,255,255,.08)}
+  :root:not([data-theme="light"]) body[data-sky="afternoon"]{--bg:#3B2B0C; --ink:#FFD37E; --soft:#BF9A55; --line:rgba(255,211,126,.16); --panel:rgba(255,255,255,.08)}
+  :root:not([data-theme="light"]) body[data-sky="overcast"]{--bg:#24272D; --ink:#C7CCD3; --soft:#7D838D; --line:rgba(199,204,211,.14); --panel:rgba(255,255,255,.06)}
+}
+:root[data-theme="dark"] body[data-sky="morning"]{--bg:#3A2A33; --ink:#FFDDBF; --soft:#C49C8E; --line:rgba(255,221,191,.16); --panel:rgba(255,255,255,.08)}
+:root[data-theme="dark"] body[data-sky="noon"]{--bg:#132C48; --ink:#CBE6FF; --soft:#7FA2C6; --line:rgba(203,230,255,.16); --panel:rgba(255,255,255,.08)}
+:root[data-theme="dark"] body[data-sky="afternoon"]{--bg:#3B2B0C; --ink:#FFD37E; --soft:#BF9A55; --line:rgba(255,211,126,.16); --panel:rgba(255,255,255,.08)}
+:root[data-theme="dark"] body[data-sky="overcast"]{--bg:#24272D; --ink:#C7CCD3; --soft:#7D838D; --line:rgba(199,204,211,.14); --panel:rgba(255,255,255,.06)}
+
+/* brillo de pantalla en la oscuridad */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:0; z-index:0;
+  background:radial-gradient(45% 55% at 62% 58%, rgba(90,130,255,.24), transparent 70%);
+  transition:opacity 1.2s ease;
+}
+body[data-sky="late"]::before{opacity:1}
+body[data-sky="dawn"]::before, body[data-sky="night"]::before{opacity:.55}
+
+#app{position:relative; z-index:1; height:100%; display:grid; grid-template-rows:auto 1fr auto}
+
+/* Barra superior */
+.hud{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:clamp(10px,2vh,22px) clamp(18px,4vw,56px); font-size:clamp(.85rem,1.2vw,1rem); font-weight:600}
+.brand{font-weight:850; font-stretch:125%; letter-spacing:-.01em}
+.chip{display:inline-flex; align-items:center; gap:.55em; opacity:0; transition:opacity .4s ease}
+.chip.show{opacity:1}
+.chip .dot{width:.6em; height:.6em; border-radius:50%; background:var(--path)}
+.meter{position:relative; display:inline-flex; align-items:center; gap:.5em; margin-left:.8em}
+.meter .lbl{color:var(--soft); font-weight:500}
+.segs{display:inline-grid; grid-template-columns:repeat(6,1fr); gap:3px; width:clamp(78px,10vw,128px)}
+.segs i{height:10px; border-radius:3px; background:var(--line); transition:background-color .3s ease}
+.segs i.fill{background:var(--badge)}
+.segs i.fill:nth-child(-n+2){background:var(--warn)}
+.segs i.pop{animation:pop .55s ease}
+@keyframes pop{0%{transform:scaleY(1)}40%{transform:scaleY(2)}100%{transform:scaleY(1)}}
+.plus{position:absolute; right:0; top:100%; color:var(--badge); font-weight:900; font-stretch:130%; font-size:1.3em; animation:rise 1.3s ease forwards; pointer-events:none}
+@keyframes rise{0%{opacity:0; transform:translateY(-4px)}20%{opacity:1}100%{opacity:0; transform:translateY(-26px)}}
+@media (max-width:560px){.cname{display:none}}
+
+/* Escenario */
+#stage{position:relative; overflow:hidden; min-height:0}
+#stage.quake{animation:quake .5s linear}
+@keyframes quake{
+  10%,90%{transform:translate(-2px,0)}
+  20%,80%{transform:translate(4px,0)}
+  30%,50%,70%{transform:translate(-8px,2px)}
+  40%,60%{transform:translate(8px,-2px)}
+}
+.scene{
+  position:absolute; inset:0; display:flex; flex-direction:column; overflow-y:auto; isolation:isolate;
+  padding:clamp(6px,2vh,24px) clamp(18px,6vw,96px);
+  opacity:0; transform:translateY(12px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+.scene.active{opacity:1; transform:none}
+.scene.leaving{opacity:0; transform:translateY(-12px); pointer-events:none}
+.inner{margin:auto; width:100%; max-width:1120px}
+.inner p{margin:0 0 .5em}
+.inner > :last-child{margin-bottom:0}
+.scene.center .inner{text-align:center}
+.scene.center .inner > *{margin-left:auto; margin-right:auto}
+
+.step{opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .55s cubic-bezier(.2,.8,.2,1)}
+.step.on{opacity:1; transform:none}
+.step:not(.on){pointer-events:none}
+.instant .step{transition:none}
+
+/* Escala tipográfica */
+.l1{font-size:clamp(2.5rem, min(7vw,11.5vh), 7.4rem); font-weight:850; font-stretch:130%; letter-spacing:-.035em; line-height:.96; max-width:17ch; text-wrap:balance}
+.l2{font-size:clamp(1.9rem, min(4.6vw,7.8vh), 4.7rem); font-weight:750; font-stretch:110%; letter-spacing:-.025em; line-height:1.03; max-width:24ch; text-wrap:balance}
+.l3{font-size:clamp(1.25rem, min(2.6vw,4.4vh), 2.4rem); font-weight:500; letter-spacing:-.01em; line-height:1.22; max-width:40ch; text-wrap:pretty}
+.l4{font-size:clamp(1rem, min(1.6vw,2.8vh), 1.35rem); line-height:1.4; max-width:56ch}
+.end-t{font-size:clamp(2.2rem, min(5vw,9vh), 5.2rem); font-weight:900; font-stretch:125%; letter-spacing:-.035em; line-height:.96; text-wrap:balance; margin-bottom:.35em !important}
+.soft{color:var(--soft)}
+.hl{color:var(--path)}
+.q{font-size:clamp(3rem, min(12vw,20vh), 12rem); font-weight:900; font-stretch:150%; letter-spacing:-.04em; line-height:.9}
+
+.w80{font-stretch:85%; color:color-mix(in srgb, var(--ink) 72%, transparent)}
+.w65{font-stretch:68%; color:color-mix(in srgb, var(--ink) 48%, transparent)}
+.w50{font-stretch:50%; color:color-mix(in srgb, var(--ink) 26%, transparent)}
+
+/* 168 */
+.mega-row{display:flex; align-items:flex-end; flex-wrap:wrap; gap:.1em .3em; margin-top:.2em}
+.mega{font-size:clamp(7rem, min(25vw,40vh), 23rem); font-weight:900; font-stretch:150%; letter-spacing:-.045em; line-height:.8; color:var(--path); font-variant-numeric:tabular-nums}
+.mega-unit{font-size:clamp(1.6rem, min(3.8vw,6.4vh), 3.8rem); font-weight:750; line-height:1.02; padding-bottom:.25em; letter-spacing:-.02em}
+
+/* Etiqueta de pregunta, con forma de globo de notificación */
+.qlabel{display:inline-flex; align-items:center; gap:.55em; font-size:clamp(1rem,1.6vw,1.3rem); font-weight:700; margin-bottom:clamp(10px,2.4vh,24px) !important}
+.num{display:inline-grid; place-items:center; min-width:1.7em; height:1.7em; padding:0 .45em; border-radius:1em; background:var(--badge); color:#fff; font-family:var(--ui); font-size:.85em; font-weight:700}
+.hand{display:inline-block; font-size:clamp(3rem,10vh,6rem); transform-origin:70% 90%; animation:wave 1.6s ease-in-out 1; margin-bottom:.1em}
+@keyframes wave{0%,100%{transform:rotate(0)}15%,45%{transform:rotate(16deg)}30%,60%{transform:rotate(-8deg)}}
+
+/* Hora de la historia */
+.ts{display:flex; align-items:baseline; flex-wrap:wrap; gap:.15em .5em; margin:0 0 clamp(10px,3vh,30px) !important}
+.ts b{font-size:clamp(2.6rem, min(7vw,11vh), 6.6rem); font-weight:900; font-stretch:140%; letter-spacing:-.03em; line-height:.85; font-variant-numeric:tabular-nums}
+.ts span{font-size:clamp(1rem,1.8vw,1.5rem); font-weight:700}
+.ts .day{color:var(--soft); font-weight:500}
+
+/* Dos columnas */
+.split{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:clamp(20px,5vw,72px); align-items:center}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+
+.thoughts{list-style:none; margin:.9em 0 0; padding:0; display:grid; gap:.35em}
+.thoughts li{font-size:clamp(1.25rem, min(2.8vw,4.6vh), 2.5rem); font-weight:700; font-stretch:110%; letter-spacing:-.015em}
+
+/* Celular */
+.phone-wrap{display:flex; justify-content:center}
+.phone{height:min(66vh,600px); aspect-ratio:9/19.5; background:var(--phone); border-radius:clamp(26px,5.5vh,46px); padding:clamp(6px,1.1vh,10px); box-shadow:0 0 0 1px var(--line), 0 40px 80px -36px rgba(0,0,0,.55)}
+.screen{position:relative; height:100%; overflow:hidden; border-radius:clamp(20px,4.6vh,38px); background:#000; font-family:var(--ui)}
+.screen::before{content:""; position:absolute; z-index:4; top:9px; left:50%; width:30%; height:18px; transform:translateX(-50%); background:#000; border-radius:12px}
+.status{position:absolute; z-index:3; inset:0 0 auto 0; display:flex; justify-content:space-between; padding:11px 20px 0; font-size:12px; font-weight:600; color:#fff; font-variant-numeric:tabular-nums}
+.track{height:100%; transition:transform .7s cubic-bezier(.7,0,.2,1)}
+.vid{position:relative; height:100%; display:grid; place-items:center; color:#fff; background:linear-gradient(170deg,var(--g1),var(--g2))}
+.vid-emoji{font-size:clamp(3rem,10vh,5.6rem)}
+.vid-cap{position:absolute; left:14px; right:58px; bottom:20px; display:grid; gap:3px; font-size:13px; line-height:1.3; text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.vid-side{position:absolute; right:10px; bottom:20px; display:grid; gap:14px; text-align:center; font-size:20px}
+.vid-side small{display:block; font-size:10px; font-weight:600}
+.ad{position:absolute; top:42px; left:14px; background:#FFD60A; color:#111; font-size:10px; font-weight:700; padding:4px 8px; border-radius:5px}
+@media (max-width:760px){.phone{height:min(50vh,440px)}}
+
+/* Perfil de Juan */
+.profile{display:flex; align-items:center; gap:clamp(12px,2vw,22px); margin-bottom:clamp(16px,4vh,40px); font-family:var(--ui)}
+.ring{padding:3px; border-radius:50%; background:conic-gradient(from 200deg, #FF2D55, #FFB020, #FF2D87, #FF2D55)}
+.avatar{width:clamp(64px,11vh,100px); aspect-ratio:1; border-radius:50%; display:grid; place-items:center; font-size:clamp(2rem,6vh,3.2rem); background:var(--bg); border:3px solid var(--bg)}
+.pname{font-size:clamp(1.2rem,2.6vh,1.6rem); font-weight:700; margin:0 !important}
+.phandle{margin:.1em 0 .5em !important; color:var(--soft); font-size:.95rem; display:flex; align-items:center; gap:.4em}
+.phandle i{width:.55em; height:.55em; border-radius:50%; background:#30D158}
+.pstats{display:flex; gap:1.4em; font-size:.88rem; color:var(--soft)}
+.pstats b{display:block; color:var(--ink); font-size:1.1rem}
+
+/* Notificaciones */
+.notifs{display:grid; gap:clamp(6px,1.2vh,10px); font-family:var(--ui)}
+.notif{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; background:var(--panel); -webkit-backdrop-filter:blur(18px) saturate(1.4); backdrop-filter:blur(18px) saturate(1.4); border:1px solid var(--line); border-radius:20px; padding:clamp(8px,1.5vh,14px) 16px}
+.notif .ni{width:2.4rem; height:2.4rem; border-radius:.6rem; display:grid; place-items:center; font-size:1.3rem; background:var(--line)}
+.notif b{display:block; font-size:clamp(.9rem,1.3vw,1.05rem); font-weight:600}
+.notif span{font-size:clamp(.82rem,1.15vw,.98rem); color:var(--soft)}
+.notif time{font-size:.75rem; color:var(--soft); align-self:start}
+.notif.step:not(.on){transform:translateY(-16px) scale(.97)}
+
+.shout{margin-top:clamp(12px,3vh,28px)}
+.shout .who{display:block; font-size:clamp(.95rem,1.5vw,1.2rem); color:var(--soft); margin-bottom:.2em}
+.shout strong{display:inline-block; font-size:clamp(2.2rem, min(6.2vw,10vh), 6.4rem); font-weight:900; font-stretch:150%; letter-spacing:-.03em; line-height:.95; color:var(--badge); transform-origin:left center}
+.shout.on strong{animation:yell .7s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes yell{0%{transform:scale(.5) rotate(-4deg); opacity:0}60%{transform:scale(1.06) rotate(1deg); opacity:1}100%{transform:none}}
+
+/* Publicaciones */
+.posts{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(10px,1.6vw,18px); font-family:var(--ui)}
+.post{background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden}
+.pimg{height:clamp(90px,18vh,170px); display:grid; place-items:center; font-size:clamp(2.2rem,7vh,4rem); background:linear-gradient(160deg,var(--g1),var(--g2))}
+.pb{padding:10px 14px 12px}
+.pu{font-size:.85rem; font-weight:600; margin:0 0 .15em !important}
+.pc{font-size:.85rem; color:var(--soft); margin:0 0 .4em !important; line-height:1.3}
+.pl{font-size:1.05rem; font-weight:700; margin:0 !important; font-variant-numeric:tabular-nums}
+@media (max-width:480px){.posts{grid-template-columns:1fr}}
+
+/* Chat */
+.msg{font-family:var(--ui); background:var(--panel); border:1px solid var(--line); border-radius:4px 20px 20px 20px; padding:12px 14px 8px; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); max-width:520px}
+.msg .from{font-size:.8rem; font-weight:600; color:var(--badge); margin:0 0 .25em !important}
+.msg .fw{font-size:.78rem; color:var(--soft); font-style:italic; margin:0 0 .5em !important}
+.ph{border-radius:12px; overflow:hidden; margin-bottom:.6em}
+.ph div{height:clamp(70px,14vh,130px); transform:scale(1.15); filter:blur(4px); background:radial-gradient(30% 50% at 30% 60%, #3b3b3b, transparent 70%), radial-gradient(25% 40% at 70% 40%, #7a2f2f, transparent 70%), linear-gradient(160deg,#9aa0a6,#4a4f55)}
+.msg .txt{font-size:clamp(.95rem,1.5vw,1.2rem); line-height:1.35; margin:0 !important}
+.msg time{display:block; text-align:right; font-size:.72rem; color:var(--soft); margin-top:.3em}
+
+/* Alerta */
+.alert{font-family:var(--ui); max-width:560px; border-radius:20px; padding:14px 18px; background:var(--panel); border:2px solid var(--badge); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); margin:.3em 0 .9em}
+.alert b{display:block; color:var(--badge); font-size:clamp(.95rem,1.4vw,1.1rem); margin-bottom:.25em}
+.alert span{font-size:clamp(.95rem,1.5vw,1.2rem)}
+
+.blackout{position:fixed; inset:0; background:#000; z-index:50}
+.blackout.step{transform:none; transition:opacity .1s linear}
+
+/* Datos tipo app */
+.stat{display:inline-flex; align-items:center; gap:.5em; font-family:var(--ui); font-size:clamp(.95rem,1.6vw,1.3rem); font-weight:500; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:.4em .95em; vertical-align:middle; color:var(--ink)}
+.stat b{font-variant-numeric:tabular-nums; font-weight:700}
+.stat::before{content:""; width:.55em; height:.55em; border-radius:50%; background:var(--badge)}
+.bubble{display:inline-block; font-family:var(--ui); background:#2F66E0; color:#fff; padding:.35em .9em; border-radius:1.1em 1.1em 1.1em .3em; font-size:.85em; font-weight:500; vertical-align:middle}
+.tag{display:inline-flex; align-items:center; gap:.55em; background:var(--ink); color:var(--bg); font-weight:700; font-size:clamp(.95rem,1.5vw,1.25rem); padding:.5em 1.05em .5em .85em; border-radius:999px}
+.tag::before{content:""; width:.6em; height:.6em; border-radius:50%; background:var(--c)}
+
+/* Resumen de decisiones */
+.recap{font-family:var(--ui); background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:clamp(12px,2.2vh,20px) clamp(14px,1.8vw,22px); margin-bottom:.9em}
+.recap-h{font-weight:700; font-size:.95rem; margin:0 0 .5em !important}
+.rr{display:grid; grid-template-columns:6.4em 1fr auto; gap:.8em; align-items:baseline; padding:.45em 0; border-top:1px solid var(--line); font-size:clamp(.85rem,1.2vw,1rem); line-height:1.3}
+.rt{color:var(--soft); font-variant-numeric:tabular-nums}
+.rp{font-weight:700; color:var(--soft); font-variant-numeric:tabular-nums}
+.rp.up{color:var(--badge)}
+.rr.total{font-weight:700}
+
+/* Botones de decisión */
+.hint{font-size:clamp(.88rem,1.2vw,1.02rem); color:var(--soft); margin:0 0 .7em !important; width:100%}
+.pills{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:clamp(14px,3.5vh,36px)}
+.pill{appearance:none; font:inherit; font-weight:650; font-size:clamp(1rem,1.5vw,1.2rem); color:var(--ink); background:transparent; border:2px solid var(--ink); border-radius:999px; padding:.55em 1.15em; cursor:pointer; display:inline-flex; gap:.5em; align-items:center; transition:background-color .2s, color .2s}
+.pill:hover{background:var(--ink); color:var(--bg)}
+.pill.primary{background:var(--ink); color:var(--bg)}
+.pill.primary:hover{background:transparent; color:var(--ink)}
+
+.fork-wrap{margin-top:clamp(14px,3.2vh,32px)}
+.fork{display:grid; grid-template-columns:1fr 1fr; border-top:2px solid var(--ink)}
+.opt{appearance:none; background:transparent; border:0; color:inherit; font:inherit; text-align:left; cursor:pointer; position:relative; display:grid; gap:.5em; align-content:start; padding:clamp(14px,2.4vh,26px) clamp(14px,2vw,28px) clamp(8px,1.6vh,16px) 0}
+.opt + .opt{border-left:2px solid var(--ink); padding-left:clamp(14px,2vw,28px)}
+.opt .n{font-size:clamp(2.4rem, min(5.4vw,9vh), 5.4rem); font-weight:900; font-stretch:150%; line-height:.85; text-underline-offset:.08em; text-decoration-thickness:.07em}
+.opt .n small{display:block; font-size:clamp(.85rem,1.3vw,1.05rem); font-weight:600; font-stretch:100%; color:var(--soft); margin-bottom:.3em; line-height:1}
+.opt .t{font-size:clamp(1.05rem, min(1.9vw,3.2vh), 1.6rem); font-weight:600; line-height:1.25; max-width:34ch}
+.opt .k{position:absolute; top:clamp(14px,2.4vh,26px); right:clamp(14px,2vw,28px)}
+.opt:hover .n{text-decoration-line:underline}
+@media (max-width:640px){
+  .fork{grid-template-columns:1fr}
+  .opt + .opt{border-left:0; border-top:2px solid var(--ink); padding-left:0}
+}
+
+/* Los tres verbos */
+.verbs{display:grid; margin-top:clamp(8px,2vh,20px)}
+.verb{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:clamp(12px,2.4vw,36px); align-items:baseline; padding:clamp(10px,2.2vh,22px) 0; border-top:2px solid var(--line)}
+.verb h3{margin:0; font-size:clamp(1.8rem, min(3.6vw,6.2vh), 3.6rem); font-weight:900; letter-spacing:-.03em; line-height:.95; color:var(--c)}
+.verb p{margin:0 !important; font-size:clamp(1rem, min(1.8vw,3vh), 1.5rem); line-height:1.3; max-width:40ch}
+.verb small{display:block; color:var(--soft); margin-top:.35em; font-size:.8em}
+@media (max-width:720px){.verb{grid-template-columns:1fr}}
+
+/* Tiempo en pantalla */
+.calc{margin-top:clamp(10px,2.6vh,26px)}
+.calc label{display:block; font-weight:700; font-size:clamp(1rem,1.6vw,1.25rem)}
+.calc label small{display:block; font-weight:400; color:var(--soft); font-size:.8em; margin-top:.15em}
+.calc-row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:.6em 0 0}
+.calc input{font:inherit; font-weight:800; font-stretch:120%; font-size:clamp(1.3rem,2.4vw,2rem); width:6.5ch; padding:.28em .55em; border-radius:14px; border:2px solid var(--ink); background:transparent; color:var(--ink)}
+.calc input::placeholder{color:var(--soft); opacity:.6}
+.grid168{display:grid; grid-template-columns:auto repeat(24,1fr); gap:clamp(2px,.3vw,4px); align-items:center; width:100%}
+.grid168 span{font-family:var(--ui); font-size:.72rem; color:var(--soft); padding-right:.5em}
+.grid168 i{aspect-ratio:1; border-radius:3px; background:var(--line); transition:background-color .25s ease}
+.grid168 i.fill{background:var(--badge)}
+.legend{font-size:.85rem; color:var(--soft); margin:.6em 0 0 !important}
+.out{font-size:clamp(1.1rem, min(2.1vw,3.6vh), 1.9rem); font-weight:600; line-height:1.25; margin-top:.8em !important; min-height:2.5em; max-width:40ch}
+.out b{color:var(--badge); font-weight:850}
+
+/* Pie */
+.foot{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:clamp(8px,1.8vh,18px) clamp(18px,4vw,56px); opacity:.5; transition:opacity .3s ease}
+.foot:hover,.foot:focus-within{opacity:1}
+.keys{display:flex; flex-wrap:wrap; gap:.4em 1.1em; font-family:var(--ui); font-size:.8rem; color:var(--soft)}
+.keys span{display:inline-flex; gap:.35em; align-items:center}
+kbd{font-family:var(--ui); font-size:.72rem; min-width:1.8em; text-align:center; border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:.1em .45em; color:var(--ink); background:transparent}
+.ctrls{display:flex; gap:8px; margin-left:auto}
+.ib{appearance:none; width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line); background:transparent; color:var(--ink); display:grid; place-items:center; cursor:pointer; padding:0}
+.ib:hover{border-color:var(--ink)}
+.ib.main{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+:focus-visible{outline:3px solid var(--path); outline-offset:3px}
+@media (max-width:700px){.keys{display:none}}
+[hidden]{display:none !important}
+
+/* Votación en vivo: presentador */
+.live-st{display:inline-flex; align-items:center; gap:.45em; font-family:var(--ui); font-size:.8rem; color:var(--soft)}
+.live-st i{width:.55em; height:.55em; border-radius:50%; background:var(--soft)}
+.live-st.on i{background:var(--good)}
+.vhead{display:flex; align-items:center; gap:clamp(10px,1.4vw,18px); margin-bottom:.7em}
+.vstat{font-family:var(--ui); font-size:clamp(.95rem,1.4vw,1.15rem); font-weight:600; margin:0 !important}
+.vstat small{display:block; font-weight:400; color:var(--soft); font-size:.85em}
+.qrmini{flex:none; width:clamp(64px,10vh,100px); aspect-ratio:1; background:#fff; padding:5px; border-radius:10px}
+.qrbig{width:min(52vh,420px); max-width:100%; aspect-ratio:1; background:#fff; padding:clamp(10px,1.6vh,18px); border-radius:24px; margin:0 auto}
+.qrmini img,.qrmini canvas,.qrbig img,.qrbig canvas{display:block; width:100% !important; height:auto !important}
+.noqr{font-family:var(--ui); font-size:.8rem; color:#16213A; word-break:break-all}
+.url{text-align:center; word-break:break-all; font-family:var(--ui)}
+.vbar{display:block; height:10px; border-radius:99px; background:var(--line); overflow:hidden}
+.vbar i{display:block; height:100%; width:0; border-radius:inherit; background:var(--ink); transition:width .4s ease}
+.vc{font-family:var(--ui); font-size:clamp(.85rem,1.2vw,1rem); color:var(--soft); font-variant-numeric:tabular-nums}
+.opt.won .vbar i{background:var(--good)}
+.opt.won .n{color:var(--good)}
+.opt.lost{opacity:.4}
+.vctl{display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(10px,2vh,18px)}
+.vctl:empty{display:none}
+.qr-over{position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:16px; background:var(--bg); cursor:pointer}
+.qr-over .box{text-align:center; display:grid; gap:clamp(8px,2vh,18px)}
+
+/* Votación en vivo: celular del público */
+body.is-voter{height:auto; min-height:100%; overflow:auto}
+#vote{max-width:560px; margin:0 auto; padding:16px 16px 40px}
+.v-top{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:clamp(16px,4vh,32px)}
+.v-q{font-size:1.45rem; font-weight:750; line-height:1.18; letter-spacing:-.015em; margin:0 0 1em; text-wrap:balance}
+.v-opts{display:grid; gap:12px}
+.v-opt{appearance:none; font:inherit; text-align:left; color:var(--ink); background:var(--panel); border:2px solid var(--line); border-radius:18px; padding:16px; display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; cursor:pointer}
+.v-opt .n{font-size:2.2rem; font-weight:900; font-stretch:150%; line-height:.9}
+.v-opt .t{font-size:1.05rem; font-weight:600; line-height:1.3}
+.v-opt.mine{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.v-note{font-family:var(--ui); font-size:.95rem; color:var(--soft); margin:16px 0 0}
+.v-wait{text-align:center; padding-top:8vh}
+.v-wait .av{font-size:4rem; line-height:1}
+.v-wait h1{font-size:1.9rem; font-weight:850; font-stretch:120%; letter-spacing:-.02em; margin:.3em 0 .2em}
+.v-wait p{font-family:var(--ui); color:var(--soft); margin:0 auto; max-width:34ch}
+.v-card{font-family:var(--ui); text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:14px 16px; margin-top:24px; display:grid; gap:.3em}
+.v-card small{color:var(--soft)}
+.v-card .up{color:var(--badge); font-weight:700}
+.v-meter{display:flex; justify-content:center; align-items:center; gap:.7em; margin-top:18px; font-family:var(--ui); font-size:.9rem; color:var(--soft)}
+.v-meter b{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important; transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="hud">
+    <div class="brand">168 horas</div>
+    <div class="chip" id="chip">
+      <span class="dot"></span><span class="cname">La vida de Juan</span>
+      <span class="meter" id="meter" aria-label="Presión: 0 de 6"><span class="lbl">Presión</span><span class="segs"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+    </div>
+  </header>
+
+  <main id="stage"></main>
+
+  <footer class="foot">
+    <div class="keys">
+      <span><kbd>→</kbd> o clic para avanzar</span>
+      <span><kbd>←</kbd> regresar</span>
+      <span><kbd>1</kbd><kbd>2</kbd> elegir</span>
+      <span><kbd>F</kbd> pantalla completa</span>
+      <span><kbd>T</kbd> tema claro u oscuro</span>
+      <span><kbd>Q</kbd> código QR</span>
+    </div>
+    <span class="live-st" id="liveSt"></span>
+    <div class="ctrls">
+      <button class="ib" id="themeBtn" title="Tema claro u oscuro (T)" aria-label="Cambiar tema">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      </button>
+      <button class="ib" id="fsBtn" title="Pantalla completa (F)" aria-label="Pantalla completa">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+      <button class="ib" id="prevBtn" title="Regresar (←)" aria-label="Regresar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button class="ib main" id="nextBtn" title="Avanzar (→)" aria-label="Avanzar">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<div id="vote" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var root = document.documentElement;
+  var body = document.body;
+  var stage = document.getElementById('stage');
+  var chip = document.getElementById('chip');
+  var meter = document.getElementById('meter');
+  var segs = meter.querySelectorAll('.segs i');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  try { var saved = localStorage.getItem('juan-theme'); if (saved === 'light' || saved === 'dark') root.dataset.theme = saved; } catch (e) {}
+
+  /* ---------- Estado de la historia ---------- */
+  function fresh(){ return {p:0, fake:false, heard:false, slept:false, log:[]}; }
+  var state = fresh();
+  function snap(){ return JSON.parse(JSON.stringify(state)); }
+  function val(x){ return typeof x === 'function' ? x() : x; }
+  function level(){
+    if (!state.log.length) return '';
+    return state.p <= 1 ? 'good' : state.p <= 3 ? 'mid' : 'bad';
+  }
+
+  /* ---------- Piezas reutilizables ---------- */
+  var vids = [
+    {e:'🐈', u:'michi.oficial', c:'mi gato tocando el piano (parte 3)', l:'1.2M', g1:'#ff8a5b', g2:'#b5179e'},
+    {e:'🍳', u:'cocina15s', c:'receta en 15 segundos', l:'89K', g1:'#ffd166', g2:'#ef476f'},
+    {e:'🥱', u:'storytime.real', c:'storytime (parte 1 de 9)', l:'3.1K', g1:'#8d99ae', g2:'#2b2d42'},
+    {e:'🛍️', u:'tienda.ya', c:'¡50% de descuento solo hoy!', l:'', g1:'#fcbf49', g2:'#f77f00', ad:true},
+    {e:'🐶', u:'perritos.mx', c:'se cayó de la cama 😂', l:'2.4M', g1:'#06d6a0', g2:'#118ab2'},
+    {e:'🌀', u:'para.ti', c:'uno más…', l:'∞', g1:'#7209b7', g2:'#3a0ca3'}
+  ];
+  var stT = ['11:02','11:19','11:48','12:30','1:15','2:03'];
+  var stB = [64, 51, 40, 28, 17, 9];
+
+  var phone = '<div class="phone" aria-hidden="true"><div class="screen">' +
+    '<div class="status"><span class="st-time">' + stT[0] + '</span><span class="st-bat">' + stB[0] + '%</span></div>' +
+    '<div class="track">' + vids.map(function(v){
+      return '<div class="vid" style="--g1:' + v.g1 + ';--g2:' + v.g2 + '">' +
+        (v.ad ? '<span class="ad">Patrocinado</span>' : '') +
+        '<span class="vid-emoji">' + v.e + '</span>' +
+        '<div class="vid-cap"><b>@' + v.u + '</b><span>' + v.c + '</span></div>' +
+        '<div class="vid-side"><span>♥<small>' + v.l + '</small></span><span>💬</span><span>↗</span></div>' +
+      '</div>';
+    }).join('') + '</div></div></div>';
+
+  function notif(o, ic, t, d, time){
+    return '<div class="notif step" data-o="' + o + '"><span class="ni">' + ic + '</span><div><b>' + t + '</b><span>' + d + '</span></div><time>' + time + '</time></div>';
+  }
+
+  var days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  var grid = '<div class="grid168" aria-hidden="true">' + days.map(function(d){
+    return '<span>' + d + '</span>' + new Array(25).join('<i></i>');
+  }).join('') + '</div>';
+
+  function recap(){
+    return '<div class="recap"><p class="recap-h">Las decisiones de Juan</p>' +
+      state.log.map(function(r){
+        return '<div class="rr"><span class="rt">' + r.t + '</span><span class="rx">' + r.txt + '</span><span class="rp' + (r.p ? ' up' : '') + '">+' + r.p + '</span></div>';
+      }).join('') +
+      '<div class="rr total"><span class="rt"></span><span class="rx">Presión total</span><span class="rp up">' + state.p + ' de 6</span></div></div>';
+  }
+
+  var endActions = [
+    {label:'Jugar otra vez desde las 7:30', to:'rw', reset:true},
+    {label:'Continuar', to:'r1', primary:true}
+  ];
+  var HINT = 'Que el grupo vote levantando la mano.';
+  var toDayTwo = function(){ return (state.fake && state.p >= 5) ? 't1' : 'x1'; };
+
+  /* ---------- Escenas ---------- */
+  var S = {
+    s1: { next:'s2', html:
+      '<p class="l3">Ha sido una larga semana.</p>' +
+      '<p class="l3 soft step">Y con “larga semana” me refiero a que han pasado…</p>' +
+      '<div class="mega-row step"><span class="mega count" data-count="168">168</span><span class="mega-unit">horas<br>de su vida.</span></div>'
+    },
+    s2: { next:'s3', html:
+      '<p class="l1">Eso es demasiado tiempo.</p>' +
+      '<p class="l2 soft step">Así que probemos algo.</p>'
+    },
+    s3: { hint:'Escucha sus respuestas y elige:', pills:[
+        {label:'🙋 Alguien respondió', to:'s4a'},
+        {label:'🦗 Nadie respondió', to:'s4b'}
+      ], html:
+      '<p class="qlabel"><span class="num">1</span>Pregunta para el grupo</p>' +
+      '<p class="l2">¿Cuál ha sido la noticia que más les impactó esta semana?</p>'
+    },
+    s4a: { next:'s5', html:
+      '<p class="l2"><span class="count" data-count="168">168</span> horas.</p>' +
+      '<p class="l2 step">Algunas noticias.</p>' +
+      '<p class="l1 step">Increíble.</p>' +
+      '<p class="l3 soft step">Quiero hacer otra pregunta.</p>'
+    },
+    s4b: { next:'s5', html:
+      '<p class="l2">168 horas…</p>' +
+      '<p class="l2 step">y ninguna noticia.</p>' +
+      '<p class="l3 soft step">¿Será que vimos tantas que ya no recordamos ninguna?</p>' +
+      '<p class="l3 step">Interesante. Quiero hacer otra pregunta.</p>'
+    },
+    s5: { next:'s6', sky:'morning', html:
+      '<p class="qlabel"><span class="num">2</span>Pregunta para el grupo</p>' +
+      '<span class="hand" aria-hidden="true">✋</span>' +
+      '<p class="l2">Levante la mano quien, al despertar, se toma 10 minutos para ver sus notificaciones.</p>'
+    },
+    s6: { next:'s7', sky:'night', html:
+      '<div class="split"><div>' +
+        '<p class="l3">Ahora levanten la mano si en la noche llegan a un punto de…</p>' +
+        '<ul class="thoughts">' +
+          '<li class="step">“Bueno, un video más.”</li>' +
+          '<li class="step">“Pero este no me gustóoo…”</li>' +
+          '<li class="step">“Pero este es un anuncio.”</li>' +
+          '<li class="step">“Jaja, este sí me gustó.”</li>' +
+          '<li class="step">“Uno más.”</li>' +
+        '</ul></div>' +
+        '<div class="phone-wrap">' + phone + '</div></div>',
+      onStep: function(el, n){
+        el.querySelector('.track').style.transform = 'translateY(-' + (n * 100) + '%)';
+        el.querySelector('.st-time').textContent = stT[n];
+        el.querySelector('.st-bat').textContent = stB[n] + '%';
+      }
+    },
+    s7: { next:'s8', sky:'night', cls:'center', html:'<p class="q">¿Les suena?</p>' },
+    s8: { next:'s9', html:
+      '<p class="l2">Bueno, hagamos un pequeño experimento.</p>' +
+      '<p class="l2 soft step">Una pequeña actividad. ¿Les parece?</p>'
+    },
+    s9: { next:'s10', html:
+      '<p class="l2">Vamos a ser espectadores de un pequeño juego.</p>' +
+      '<p class="l1 step">Somos espectadores de la vida de Juan.</p>'
+    },
+    s10: { next:'s10b', html:
+      '<div class="profile"><div class="ring"><div class="avatar">🧑</div></div><div>' +
+        '<p class="pname">Juan</p><p class="phandle"><i></i>@juan, en línea</p>' +
+        '<div class="pstats"><div><b>312</b>publicaciones</div><div><b>1,248</b>seguidores</div><div><b>890</b>siguiendo</div></div>' +
+      '</div></div>' +
+      '<p class="l2">Juan tiene redes sociales desde muy pequeño…</p>' +
+      '<p class="l2 step">y desarrolló un apego ansioso a ellas.</p>'
+    },
+    s10b: { story:true, next:function(){ return live.ready ? 'qr' : 's11'; }, html:
+      '<p class="l2">Hoy, ustedes van a decidir por Juan.</p>' +
+      '<p class="l3 step">Cada decisión puede sumarle presión. Vean el medidor de arriba.</p>' +
+      '<p class="l3 soft step">Hay cuatro finales posibles.</p>'
+    },
+    qr: { story:true, next:'s11', html: function(){
+      return '<div class="split"><div>' +
+          '<p class="l2">Saquen su celular. 📱</p>' +
+          '<p class="l3 step">Escaneen el código. En cada decisión, las opciones les van a aparecer ahí.</p>' +
+          '<p class="l3 soft step">Pueden cambiar su voto mientras la votación siga abierta.</p>' +
+          '<p class="l4 lobby-st">' + lobbyStatus() + '</p>' +
+        '</div><div><div class="qrbig" data-qr></div><p class="legend url">' + VOTE_URL + '</p></div></div>';
+      }
+    },
+    s11: { story:true, next:'s12', sky:'dawn', t:'5:00', ap:'a. m.', html:
+      '<div class="split"><div>' +
+        '<p class="l2">Juan se levanta y revisa el celular.</p>' +
+        '<p class="l3 soft step" data-o="6">Lo habitual.</p>' +
+      '</div><div class="notifs">' +
+        notif(1,'💬','Chats','12 mensajes nuevos','ahora') +
+        notif(2,'🔥','Tendencias','El trend que todos están haciendo hoy','2 min') +
+        notif(3,'💃','Bailes','Tus amigos ya se aprendieron el nuevo baile','5 min') +
+        notif(4,'👀','Chismes','No vas a creer quién dejó de seguir a quién','9 min') +
+        notif(5,'🥊','Famosos','Se armó el pleito en vivo','14 min') +
+      '</div></div>' +
+      '<div class="shout step" data-o="7"><span class="who">Hasta que… se escucha a su mamá:</span><strong>¡JUAAAN, YA VA BIEN TARDE!</strong></div>',
+      onStep: function(el, n, instant){ if (n === 7 && !instant) quake(); }
+    },
+
+    /* ===== Decisión 1: en clase ===== */
+    s12: { story:true, sky:'morning', t:'7:30', ap:'a. m.', hint:HINT,
+      vq:'Juan está en clase, con sueño y sin poder poner atención. ¿Qué hace?', choices:[
+        {label:'Procurar su estudio, su futuro.', to:'a1', p:0, set:{heard:true}, log:'Puso atención en clase'},
+        {label:'Revisar si sus videos tienen algún mensaje nuevo: de apoyo, de admiración, un nuevo seguidor… o tal vez le escribió la chica que le gusta.', to:'b1', p:1, log:'Revisó el celular en clase'}
+      ], html:
+      '<p class="l3">Juan está en clase. Con sueño, ojeras visibles y dificultad para poner atención. 😴</p>' +
+      '<p class="l2 step">¿Qué hará nuestro querido Juan?</p>'
+    },
+    a1: { story:true, sky:'morning', next:'a1b', t:'7:30', ap:'a. m.', html:
+      '<p class="l2">Juan guarda el celular en la mochila. 🎒</p>' +
+      '<p class="l2 step">No es fácil.</p>' +
+      '<p class="l3 step">Siente que vibra… pero no vibró.</p>' +
+      '<p class="l4 soft step">A eso se le llama “vibración fantasma”, y le pasa a más gente de la que creerías.</p>'
+    },
+    a1b: { story:true, sky:'morning', next:'d2', t:'7:45', ap:'a. m.', html:
+      '<p class="l2">15 minutos después.</p>' +
+      '<p class="l3 step">El maestro avisa: examen mañana.</p>' +
+      '<p class="l3 step">Juan entiende la mitad del tema. <span class="soft">La otra mitad… no tanto.</span></p>'
+    },
+    b1: { story:true, sky:'morning', next:'b1b', t:'7:45', ap:'a. m.', html:
+      '<p class="l2">15 minutos han pasado.</p>' +
+      '<p class="step"><span class="stat">Revisó el celular <b class="count" data-count="23">23</b> veces</span></p>' +
+      '<p class="l3 step">Siente presión.</p>' +
+      '<p class="l2 step">Necesidad de saber que todavía existe para los demás.</p>'
+    },
+    b1b: { story:true, sky:'morning', next:'d2', t:'8:10', ap:'a. m.', html:
+      '<p class="l2">El maestro explica lo que vendrá en el examen de mañana.</p>' +
+      '<p class="l1 step">Juan no escuchó nada.</p>'
+    },
+
+    /* ===== Decisión 2: el recreo ===== */
+    d2: { story:true, sky:'noon', t:'11:00', ap:'a. m.', hint:HINT,
+      vq:'Recreo. Juan abre el celular “un segundo” y ve el fin de semana perfecto de Diego. Su video tiene 12 likes. ¿Qué hace?', choices:[
+        {label:'Pensar “cada quien su vida”, guardar el celular y seguir platicando con sus amigos.', to:'c1', p:0, log:'Siguió platicando con sus amigos'},
+        {label:'Subir algo “mejor” para no quedarse atrás y quedarse revisando quién lo ve.', to:'c2', p:1, log:'Se comparó y subió algo para no quedarse atrás'}
+      ], html:
+      '<div class="split"><div>' +
+        '<p class="l3">Recreo. Juan está con sus amigos y abre el celular “un segundo”.</p>' +
+        '<p class="l2 step" data-o="2">¿Qué hace Juan?</p>' +
+      '</div><div class="posts">' +
+        '<div class="post"><div class="pimg" style="--g1:#ffb347;--g2:#ff5e62">🏖️</div><div class="pb"><p class="pu">@diego.vlogs</p><p class="pc">Fin de semana en la playa con coche nuevo 🌴</p><p class="pl">♥ 3,482</p></div></div>' +
+        '<div class="post step" data-o="1"><div class="pimg" style="--g1:#8e9eab;--g2:#5c6b7a">🎮</div><div class="pb"><p class="pu">@juan</p><p class="pc">mi video nuevo, denle like 🙏</p><p class="pl">♥ 12</p></div></div>' +
+      '</div></div>'
+    },
+    c1: { story:true, sky:'noon', next:'d3', t:'11:05', ap:'a. m.', html:
+      '<p class="l2">Juan guarda el celular.</p>' +
+      '<p class="l2 step">Se ríen de algo que nadie grabó.</p>' +
+      '<p class="l3 soft step">Nadie lo subió a ningún lado. Y aun así, fue lo mejor del día.</p>'
+    },
+    c2: { story:true, sky:'noon', next:'d3', t:'11:20', ap:'a. m.', html:
+      '<p class="l2">Juan sube una foto con filtro.</p>' +
+      '<p class="step"><span class="stat">👁 <b class="count" data-count="48">48</b> vistas</span></p>' +
+      '<p class="l3 step">Sus amigos se ríen de algo.</p>' +
+      '<p class="l2 step">Juan no sabe de qué. Estaba viendo quién vio su historia.</p>'
+    },
+
+    /* ===== Decisión 3: la noticia falsa ===== */
+    d3: { story:true, sky:'afternoon', t:'2:15', ap:'p. m.', hint:HINT,
+      vq:'Al grupo del salón llega: “URGENTE: balacera a dos cuadras de la escuela. Pásenlo a todos”. ¿Qué hace Juan?', choices:[
+        {label:'Verificar primero: revisar cuentas oficiales y medios confiables antes de compartir.', to:'e1', p:0, log:'Verificó la noticia antes de compartirla'},
+        {label:'Reenviarlo a todos sus grupos. Mejor prevenir, ¿no?', to:'e2', p:2, set:{fake:true}, log:'Reenvió una noticia falsa sin verificar'}
+      ], html:
+      '<div class="split"><div>' +
+        '<p class="l3">Saliendo de la escuela, le llega esto al grupo del salón:</p>' +
+        '<p class="l2 step">¿Qué hace Juan?</p>' +
+      '</div><div class="msg">' +
+        '<p class="from">+52 33 •••• 1287</p>' +
+        '<p class="fw">↪ Reenviado muchas veces</p>' +
+        '<div class="ph"><div></div></div>' +
+        '<p class="txt">⚠️⚠️ URGENTE ⚠️⚠️ Reportan balacera a dos cuadras de la escuela. NO SALGAN. Pásenlo a todos, esto no lo van a decir en las noticias.</p>' +
+        '<time>2:14 p. m.</time>' +
+      '</div></div>'
+    },
+    e1: { story:true, sky:'afternoon', next:'d4', t:'2:20', ap:'p. m.', html:
+      '<p class="l2">Juan revisa las cuentas oficiales de Protección Civil, de la escuela y de dos periódicos.</p>' +
+      '<p class="l3 step">No hay ningún reporte. La foto era de otra ciudad, y de hace años.</p>' +
+      '<p class="l2 step">Juan avisa en el grupo que es falso.</p>' +
+      '<p class="step"><span class="tag" style="--c:var(--info)">Los medios benefician</span></p>'
+    },
+    e2: { story:true, sky:'afternoon', next:'d4', t:'2:17', ap:'p. m.', html:
+      '<p class="l2">Juan lo reenvía a 6 grupos.</p>' +
+      '<p class="step"><span class="stat">Reenviado <b class="count" data-count="312">312</b> veces en una hora</span></p>' +
+      '<p class="l3 step">Su mamá sale corriendo del trabajo para ir por él.</p>' +
+      '<p class="l3 step">Una hora después se supo: era falso. La foto era de otra ciudad, y de hace años.</p>' +
+      '<p class="l2 step">Pero en varios grupos ya aparece su nombre.</p>'
+    },
+
+    /* ===== Decisión 4: en casa ===== */
+    d4: { story:true, sky:'dusk', t:'7:00', ap:'p. m.', hint:HINT,
+      vq:'En casa. Mañana hay examen y no paran de llegarle alertas y noticias. ¿Qué hace Juan?', choices:[
+        {label:'Silenciar las notificaciones y ponerse a estudiar.', to:'f1', p:0, log:'Silenció las notificaciones para estudiar'},
+        {label:'Seguir leyendo todo. Siente que tiene que estar enterado.', to:'f2', p:1, log:'Se quedó leyendo alertas y noticias'}
+      ], html: function(){
+        return '<div class="split"><div>' +
+          (state.heard
+            ? '<p class="l3">En casa. Juan tiene que estudiar para el examen de mañana.</p>'
+            : '<p class="l3">Un amigo le escribe: “¿ya estudiaste para el examen de mañana?”. Juan ni sabía que había examen.</p>') +
+          '<p class="l2 step" data-o="5">¿Qué hace Juan?</p>' +
+        '</div><div class="notifs">' +
+          notif(1,'⚠️','Alerta','Zona de riesgo cerca de ti. Evita circular por la zona.','ahora') +
+          notif(2,'🔓','Última hora','Hackeo masivo: cambia todas tus contraseñas YA','1 min') +
+          notif(3,'😱','Para ti','Lo que nadie te está diciendo sobre lo que viene','3 min') +
+          (state.fake
+            ? notif(4,'💬','Grupo del salón','“¿Tú fuiste el que pasó lo de la balacera?”','4 min')
+            : notif(4,'📈','Tendencias','Todos están hablando de esto','4 min')) +
+        '</div></div>';
+      }
+    },
+    f1: { story:true, sky:'dusk', next:'d5', t:'7:10', ap:'p. m.', html:
+      '<p class="l2">Juan activa el modo no molestar. 🔕</p>' +
+      '<p class="l3 step">Busca un video que explique el tema.</p>' +
+      '<p class="l2 step">En 10 minutos, por fin lo entiende.</p>' +
+      '<p class="step"><span class="tag" style="--c:var(--good)">Los medios complementan</span></p>'
+    },
+    f2: { story:true, sky:'night', next:'d5', t:'9:40', ap:'p. m.', html:
+      '<p class="l2">Juan lee una alerta. Luego otra. Y otra.</p>' +
+      '<p class="l2 step">Ya no sabe qué es real y qué no.</p>' +
+      '<p class="l3 step">Siente el pecho apretado.</p>' +
+      '<p class="l3 soft step">El cuaderno sigue cerrado.</p>'
+    },
+
+    /* ===== Decisión 5: en la cama ===== */
+    d5: { story:true, sky:'night', t:'11:30', ap:'p. m.', hint:HINT,
+      vq:'Ya es tarde, mañana hay examen y Juan está en la cama con el celular en la mano. ¿Qué hace?', choices:[
+        {label:'Dejar el celular cargando lejos de la cama y dormir.', to:'h1', p:0, set:{slept:true}, log:'Dejó el celular y se durmió'},
+        {label:'“Un video más.”', to:'h2', p:1, log:'Se quedó viendo videos hasta la madrugada'}
+      ], html:
+      '<p class="l2">Ya es tarde y mañana hay examen.</p>' +
+      '<p class="l3 step">Juan está en la cama, con el celular en la mano.</p>' +
+      '<p class="l2 step">¿Qué hace Juan?</p>'
+    },
+    h1: { story:true, sky:'night', next:toDayTwo, t:'11:35', ap:'p. m.', html:
+      '<p class="l3">Antes de dormir, le escribe a la chica que le gusta. <span class="bubble">Ella contesta 💬</span></p>' +
+      '<p class="l2 step">Deja el celular cargando lejos de la cama. 🔌</p>' +
+      '<p class="l1 step">Y esta vez, sí durmió.</p>'
+    },
+    h2: { story:true, sky:'late', next:toDayTwo, t:'2:37', ap:'a. m.', html:
+      '<p class="l1">Un video más.</p>' +
+      '<p class="l1 step w80">Uno más.</p>' +
+      '<p class="l1 step w65">Uno más.</p>' +
+      '<p class="l1 step w50">Uno más.</p>'
+    },
+
+    /* ===== Día 2: el examen ===== */
+    x1: { story:true, t:'7:30', ap:'a. m.', day:'Martes',
+      sky: function(){ return state.p <= 1 ? 'morning' : state.p <= 3 ? 'noon' : 'overcast'; },
+      html: function(){
+        var h = '<p class="l1">Examen.</p>';
+        if (state.p <= 1) h += '<p class="l2 step">Juan lee la primera pregunta.</p><p class="l2 step">La sabe.</p>';
+        else if (state.p <= 3) h += '<p class="l2 step">Juan contesta lo que puede.</p><p class="l3 soft step">Algunas las sabe. Otras, las adivina.</p>';
+        else h += '<p class="l2 step">Juan se queda en blanco.</p><p class="l3 soft step">No es que no sea inteligente. Es que su cabeza estuvo en otro lado todo el día.</p>';
+        return h;
+      },
+      next: function(){ return state.p <= 1 ? 'eGood' : state.p <= 3 ? 'eMid' : 'eBad'; }
+    },
+
+    /* ===== Día 2: camino al final trágico ===== */
+    t1: { story:true, sky:'dawn', next:'t2', t:'6:40', ap:'a. m.', day:'Martes', html: function(){
+        return '<div class="split"><div>' +
+          (state.slept
+            ? '<p class="l2">Juan despierta y el celular no para de vibrar.</p>'
+            : '<p class="l2">Juan durmió dos horas. El celular no para de vibrar.</p>') +
+          '<p class="l3 step" data-o="5">Su nombre ya circula por todos lados.</p>' +
+        '</div><div class="notifs">' +
+          notif(1,'💬','Grupo del salón','“Ya exhibieron al que pasó lo de la balacera”','ahora') +
+          notif(2,'💬','Mensaje nuevo','“Mi abuela casi se desmaya por tu mensaje”','3 min') +
+          notif(3,'📸','Te etiquetaron','Tu nombre aparece en una captura de pantalla','8 min') +
+          notif(4,'🔔','Notificaciones','99+ sin leer','') +
+        '</div></div>';
+      }
+    },
+    t2: { story:true, sky:'overcast', next:'t3', t:'7:10', ap:'a. m.', day:'Martes', html:
+      '<p class="l2">Camino a la escuela.</p>' +
+      '<div class="alert step"><b>⚠️ Alerta de emergencia</b><span>Zona de riesgo cerca de ti. Evita circular por la zona.</span></div>' +
+      '<p class="l3 step">¿Es real? ¿Es otra noticia falsa?</p>' +
+      '<p class="l2 step">Juan ya no sabe qué creer.</p>' +
+      '<p class="l3 soft step">Camina leyendo lo que dicen de él.</p>'
+    },
+    t3: { story:true, sky:'overcast', next:'tEnd', t:'7:14', ap:'a. m.', day:'Martes', html:
+      '<p class="l2">El semáforo está en rojo para los peatones.</p>' +
+      '<p class="l1 step">Juan no levanta la vista.</p>' +
+      '<div class="blackout step" aria-hidden="true"></div>',
+      onStep: function(el, n, instant){ if (n === 2 && !instant) quake(); }
+    },
+
+    /* ===== Finales ===== */
+    eGood: { story:true, path:'good', sky:'morning', next:'r1', actions:endActions, vEnd:'Juan usa los medios. Los medios no usan a Juan.', html: function(){
+        return '<div class="split"><div>' +
+          '<p class="l4 soft">Final 1 de 4</p>' +
+          '<p class="end-t">Juan usa los medios. Los medios no usan a Juan.</p>' +
+          '<p class="l3 step">Mismo celular. Mismas redes. Mismas 24 horas.</p>' +
+          '<p class="l2 step">Diferente decisión.</p>' +
+        '</div><div class="step">' + recap() + '</div></div>';
+      }
+    },
+    eMid: { story:true, path:'mid', sky:'noon', next:'r1', actions:endActions, vEnd:'A medias.', html: function(){
+        return '<div class="split"><div>' +
+          '<p class="l4 soft">Final 2 de 4</p>' +
+          '<p class="end-t">A medias.</p>' +
+          '<p class="l3 step">Juan pasó el examen con lo justo.</p>' +
+          '<p class="l3 soft step">No fue un desastre. Pero tampoco fue el día que él quería.</p>' +
+          '<p class="l2 step">Cada decisión chiquita suma.</p>' +
+        '</div><div class="step">' + recap() + '</div></div>';
+      }
+    },
+    eBad: { story:true, path:'bad', sky:'late', next:'r1', actions:endActions, vEnd:'Siempre conectado, nunca presente.', html: function(){
+        return '<div class="split"><div>' +
+          '<p class="l4 soft">Final 3 de 4</p>' +
+          '<p class="end-t">Siempre conectado, nunca presente.</p>' +
+          '<p class="l3 step">Ese día, Juan recibió <b class="count hl" data-count="214">214</b> notificaciones.</p>' +
+          '<p class="l2 step">Ninguna le preguntó cómo estaba.</p>' +
+        '</div><div class="step">' + recap() + '<span class="tag" style="--c:var(--badge)">Los medios afectan</span></div></div>';
+      }
+    },
+    tEnd: { story:true, path:'bad', sky:'late', next:'r1', actions:endActions, vEnd:'Lo que no vio.', html: function(){
+        return '<div class="split"><div>' +
+          '<p class="l4 soft">Final 4 de 4</p>' +
+          '<p class="end-t">Lo que no vio.</p>' +
+          '<p class="l3 step">Juan despertó en el hospital dos días después.</p>' +
+          '<p class="l3 soft step">Su celular seguía en la mesita, vibrando: 99+ notificaciones.</p>' +
+          '<p class="l2 step">Recibió cientos de alertas para cuidarse. Ninguna le avisó del coche.</p>' +
+        '</div><div class="step">' + recap() + '<span class="tag" style="--c:var(--badge)">Los medios afectan</span></div></div>';
+      }
+    },
+    rw: { story:true, next:'s12', html:
+      '<p class="l3 soft">⏪ Rebobinando…</p>' +
+      '<p class="l2">Regresemos al lunes, a las 7:30 a. m.</p>' +
+      '<p class="l1 step">¿Qué pasa si esta vez eligen diferente?</p>'
+    },
+
+    /* ===== Cierre y argumento ===== */
+    r1: { next:'r1b', html:
+      '<p class="l2">Juan no es un mal chico.</p>' +
+      '<p class="l2 step">Y el celular no es el villano.</p>' +
+      '<p class="l1 step">La diferencia está en quién tiene el control.</p>'
+    },
+    r1b: { next:'r2', html:
+      '<p class="l2">Y cada vez que reenviamos algo sin verificar…</p>' +
+      '<p class="l1 step">nosotros también nos volvemos un medio de comunicación.</p>'
+    },
+    r2: { next:'r3', html:
+      '<p class="l3 soft">Entonces, los medios…</p>' +
+      '<div class="verbs">' +
+        '<div class="verb step" style="--c:var(--badge)"><h3>Afectan</h3><p>nuestro sueño, nuestra atención y la forma en que nos vemos a nosotros mismos.<small>La presión de los likes, las alertas y las desveladas de Juan</small></p></div>' +
+        '<div class="verb step" style="--c:var(--info)"><h3>Benefician</h3><p>nos informan, nos acercan a quien está lejos y nos dan voz.<small>Juan verificando la noticia en fuentes oficiales</small></p></div>' +
+        '<div class="verb step" style="--c:var(--good)"><h3>Complementan</h3><p>lo que aprendemos en clase y lo que vivimos fuera de la pantalla.<small>Juan entendiendo el tema con un video</small></p></div>' +
+      '</div>'
+    },
+    r3: { next:'r4', html:
+      '<div class="split"><div>' +
+        '<p class="l3 soft">Última actividad</p>' +
+        '<p class="l2">Por última vez en esta clase: usen su celular.</p>' +
+        '<p class="l3 step">Revisen su tiempo en pantalla de esta semana.</p>' +
+        '<div class="calc step no-adv">' +
+          '<label for="hrs">¿Cuántas horas les marca?<small>Si les sale el promedio diario, multiplíquenlo por 7.</small></label>' +
+          '<div class="calc-row"><input id="hrs" type="number" inputmode="decimal" min="0" max="168" step="0.5" placeholder="35"><button class="pill primary" data-calc>Calcular</button></div>' +
+          '<p class="out" aria-live="polite"></p>' +
+        '</div>' +
+      '</div><div>' + grid + '<p class="legend">Cada cuadrito es una hora de su semana.</p></div></div>'
+    },
+    r4: { actions:[{label:'Volver al inicio', to:'s1'}], html:
+      '<p class="l2">Esta semana tuvieron <span class="count hl" data-count="168">168</span> horas.</p>' +
+      '<p class="l1 step">¿Cuántas fueron realmente suyas?</p>' +
+      '<p class="l3 soft step">Gracias.</p>'
+    }
+  };
+
+  /* ---------- Votación en vivo (Firebase) ----------
+     Presentador: esta página tal cual. Público: la misma dirección + #votar (a la que lleva el QR).
+     Usa las mismas reglas que reglas-firebase.json: state (solo el presentador), votes/{ronda}/{uid}, presence. */
+  var firebaseConfig = {
+    apiKey: "AIzaSyDoLU6r56UhFk75-zyOZuxmWqW_BIbo5fI",
+    authDomain: "redes-ae6fa.firebaseapp.com",
+    databaseURL: "https://redes-ae6fa-default-rtdb.firebaseio.com",
+    projectId: "redes-ae6fa",
+    storageBucket: "redes-ae6fa.firebasestorage.app",
+    messagingSenderId: "493168665147",
+    appId: "1:493168665147:web:a96756c221c4f20988f21e"
+  };
+  var VOTER = location.hash.replace('#', '').toLowerCase() === 'votar';
+  var VOTE_URL = location.origin + location.pathname + '#votar';
+  var live = {ready:false, blocked:false, error:'', connected:false, online:0};
+  var db = null, uid = null;
+  var vote = null;      // votación abierta en esta escena: {scene, round, open, counts:[a,b], ref}
+  var lastPick = null;  // última decisión del grupo, para mostrarla en los celulares
+  var qrOver = null;
+
+  function startLive(){
+    if (typeof firebase === 'undefined'){ live.error = 'No se pudo cargar Firebase. ¿Hay internet?'; return liveChanged(); }
+    try { firebase.initializeApp(firebaseConfig); db = firebase.database(); }
+    catch (e){ live.error = 'La configuración de Firebase no es válida.'; return liveChanged(); }
+    db.ref('.info/connected').on('value', function(s){ live.connected = !!s.val(); liveChanged(); });
+    firebase.auth().signInAnonymously().catch(function(){
+      live.error = 'No se pudo iniciar la sesión anónima. Abre la página desde GitHub Pages o Live Server, no con doble clic.';
+      liveChanged();
+    });
+    firebase.auth().onAuthStateChanged(function(u){
+      if (!u || uid) return;
+      uid = u.uid;
+      var me = db.ref('presence/' + uid);
+      db.ref('.info/connected').on('value', function(s){
+        if (!s.val()) return;
+        me.onDisconnect().remove();
+        me.set(VOTER ? 'voter' : 'host');
+      });
+      if (VOTER) return voterListen();
+      db.ref('presence').on('value', function(s){
+        var n = 0; s.forEach(function(c){ if (c.val() === 'voter') n++; });
+        live.online = n; liveChanged();
+      });
+      db.ref('state').get().then(function(s){
+        var cur = s.val();
+        if (cur && cur.hostUid && cur.hostUid !== uid){ live.blocked = true; return liveChanged(); }
+        live.ready = true; push(); liveChanged();
+      }).catch(function(){ live.error = 'No se pudo leer la base de datos. Revisa las reglas.'; liveChanged(); });
+    });
+  }
+
+  // Publica en qué escena va la historia, para que los celulares la sigan.
+  function push(){
+    if (!live.ready || !current) return;
+    var sc = S[current], mine = vote && vote.scene === current;
+    db.ref('state').set({
+      hostUid: uid, story: 'juan', scene: current,
+      round: mine ? vote.round : 0,
+      open: !!(mine && vote.open),
+      sky: body.dataset.sky || '',
+      p: state.p,
+      last: lastPick,
+      end: sc.vEnd || null
+    }).catch(function(){ live.ready = false; live.error = 'No se pudo guardar el avance. ¿Otro dispositivo es el presentador?'; liveChanged(); });
+  }
+
+  function openVote(){
+    stopVote();
+    var v = vote = {scene: current, round: String(Date.now()), open: true, counts: [0, 0]};
+    v.ref = db.ref('votes/' + v.round);
+    v.ref.on('value', function(s){
+      var c = [0, 0];
+      s.forEach(function(x){ var k = x.val(); if (k === 'A') c[0]++; else if (k === 'B') c[1]++; });
+      v.counts = c; paintVotes();
+    });
+    push(); paintVotes();
+  }
+  function stopVote(){ if (vote && vote.ref) vote.ref.off(); vote = null; }
+  function setOpen(o){ if (!vote) return; vote.open = o; push(); paintVotes(); }
+  function winner(){
+    if (!vote) return -1;
+    var c = vote.counts;
+    return c[0] > c[1] ? 0 : c[1] > c[0] ? 1 : -1;
+  }
+
+  function paintVotes(){
+    if (!sceneEl || !vote || vote.scene !== current) return;
+    var c = vote.counts, total = c[0] + c[1], w = vote.open ? -1 : winner();
+    Array.prototype.forEach.call(sceneEl.querySelectorAll('.opt'), function(b, i){
+      var pct = total ? Math.round(c[i] / total * 100) : 0;
+      var bar = b.querySelector('.vbar i'), txt = b.querySelector('.vc');
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.textContent = c[i] + (c[i] === 1 ? ' voto' : ' votos') + ' · ' + pct + '%';
+      b.classList.toggle('won', w === i);
+      b.classList.toggle('lost', w !== -1 && w !== i);
+    });
+    var st = sceneEl.querySelector('.vstat'), ctl = sceneEl.querySelector('.vctl');
+    var votos = total + (total === 1 ? ' voto' : ' votos');
+    if (st) st.innerHTML = vote.open
+      ? 'Votación abierta · ' + votos + '<small>' + live.online + ' conectados · pueden cambiar su voto</small>'
+      : w === -1
+        ? 'Empate · ' + votos + '<small>Elige tú la opción ganadora (tecla 1 o 2)</small>'
+        : 'Votación cerrada · ganó la opción ' + (w + 1) + '<small>' + votos + '</small>';
+    if (ctl) ctl.innerHTML = vote.open
+      ? '<button class="pill primary" data-vote="close">Cerrar votación</button>'
+      : (w === -1 ? '' : '<button class="pill primary" data-vote="go">Continuar con la opción ' + (w + 1) + '</button>') +
+        '<button class="pill" data-vote="reopen">Reabrir votación</button>';
+  }
+
+  function lobbyStatus(){
+    if (live.blocked) return 'Otro dispositivo ya es el presentador, así que los votos no llegarán aquí. Para presentar desde este, borra el nodo <b>state</b> en Firebase y recarga.';
+    if (live.error) return live.error;
+    if (!live.ready) return 'Conectando…';
+    return '<b data-online>' + live.online + '</b> conectados';
+  }
+
+  function liveChanged(){
+    if (VOTER) return renderVoter();
+    var st = document.getElementById('liveSt');
+    st.className = 'live-st' + (live.ready ? ' on' : '');
+    st.title = live.error;
+    st.innerHTML = '<i></i>' + (live.ready ? 'En vivo · <b data-online>' + live.online + '</b> conectados'
+      : live.blocked ? 'Votos desactivados: hay otro presentador'
+      : live.error ? 'Sin votación en vivo' : 'Conectando…');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-online]'), function(e){ e.textContent = live.online; });
+    var ls = document.querySelector('.lobby-st'); if (ls) ls.innerHTML = lobbyStatus();
+    paintVotes();
+  }
+
+  function drawQRs(rootEl){
+    Array.prototype.forEach.call(rootEl.querySelectorAll('[data-qr]'), function(el){
+      if (el.firstChild) return;
+      if (typeof QRCode === 'undefined'){ el.innerHTML = '<span class="noqr">' + VOTE_URL + '</span>'; return; }
+      try { new QRCode(el, {text: VOTE_URL, width: 512, height: 512, colorDark: '#16213A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M}); }
+      catch (e){ el.innerHTML = '<span class="noqr">' + VOTE_URL + '</span>'; }
+    });
+  }
+
+  function toggleQR(){
+    if (qrOver){ qrOver.parentNode.removeChild(qrOver); qrOver = null; return; }
+    qrOver = document.createElement('div');
+    qrOver.className = 'qr-over';
+    qrOver.innerHTML = '<div class="box"><p class="l2">Escaneen para votar por Juan</p><div class="qrbig" data-qr></div>' +
+      '<p class="legend url">' + VOTE_URL + '</p><p class="l4 soft"><b data-online>' + live.online + '</b> conectados · <kbd>Q</kbd> para cerrar</p></div>';
+    qrOver.addEventListener('click', toggleQR);
+    body.appendChild(qrOver);
+    drawQRs(qrOver);
+  }
+
+  /* --- Vista del celular --- */
+  var vstate = null, myVote = null, myRef = null, myRound = null;
+
+  function voterListen(){
+    db.ref('state').on('value', function(s){
+      vstate = s.val();
+      var r = vstate && vstate.round ? String(vstate.round) : null;
+      if (r !== myRound){
+        if (myRef) myRef.off();
+        myRef = null; myVote = null; myRound = r;
+        if (r){
+          myRef = db.ref('votes/' + r + '/' + uid);
+          myRef.on('value', function(x){ myVote = x.val(); renderVoter(); });
+          if (vstate.open && navigator.vibrate) try { navigator.vibrate(80); } catch (e) {}
+        }
+      }
+      renderVoter();
+    }, function(){ live.error = 'Sin permiso para leer la historia. Revisa las reglas.'; renderVoter(); });
+  }
+
+  function renderVoter(){
+    var box = document.getElementById('vote');
+    var v = vstate, sc = v && v.story === 'juan' ? S[v.scene] : null;
+    if (v && v.sky) body.dataset.sky = v.sky; else delete body.dataset.sky;
+    function wait(icon, title, text){ return '<div class="v-wait"><div class="av">' + icon + '</div><h1>' + title + '</h1><p>' + text + '</p></div>'; }
+    var num = myVote === 'A' ? 1 : 2;
+    var h;
+    if (live.error){
+      h = wait('⚠️', 'Algo falló', live.error) + '<p class="v-note" style="text-align:center"><button class="pill" data-reload>Reintentar</button></p>';
+    } else if (!sc){
+      h = wait('⏳', 'Esperando al presentador', 'Deja esta página abierta. Aquí vas a decidir por Juan.');
+    } else if (sc.choices && v.open){
+      h = '<p class="ts"><b>' + sc.t + '</b><span>' + sc.ap + '</span></p>' +
+        '<p class="v-q">' + sc.vq + '</p><div class="v-opts">' +
+        sc.choices.map(function(c, i){
+          var k = i ? 'B' : 'A';
+          return '<button class="v-opt' + (myVote === k ? ' mine' : '') + '" data-k="' + k + '"><span class="n">' + (i + 1) + '</span><span class="t">' + c.label + '</span></button>';
+        }).join('') + '</div>' +
+        '<p class="v-note">' + (myVote ? 'Votaste por la opción ' + num + '. Puedes cambiarlo mientras siga abierta.' : 'Toca una opción para votar.') + '</p>';
+    } else if (sc.choices && v.round){
+      h = wait('🔒', 'Votación cerrada', (myVote ? 'Votaste por la opción ' + num + '. ' : '') + 'Mira la pantalla.');
+    } else if (v.end){
+      h = wait('🎬', v.end, 'Así terminó la historia de Juan. Mira la pantalla.');
+    } else {
+      h = wait('🧑', 'Mira la pantalla', 'Cuando Juan tenga que decidir, las opciones te aparecen aquí.');
+      if (v.last) h += '<div class="v-card"><small>Lo que eligió el grupo</small><b>' + v.last.txt + '</b>' +
+        (v.last.p ? '<span class="up">+' + v.last.p + ' de presión</span>' : '<span>Sin presión extra</span>') + '</div>';
+    }
+    if (sc && sc.story && !live.error){
+      var p = Math.min(v.p || 0, 6), segs = '';
+      for (var i = 0; i < 6; i++) segs += '<i' + (i < p ? ' class="fill"' : '') + '></i>';
+      h += '<div class="v-meter">Presión <span class="segs">' + segs + '</span><b>' + p + ' de 6</b></div>';
+    }
+    box.innerHTML = '<div class="v-top hud" style="padding:0"><span class="brand">168 horas</span>' +
+      '<span class="live-st' + (live.connected ? ' on' : '') + '"><i></i>' + (live.connected ? 'En vivo' : 'Conectando…') + '</span></div>' + h;
+
+    Array.prototype.forEach.call(box.querySelectorAll('.v-opt'), function(b){
+      b.onclick = function(){
+        if (!vstate || !vstate.open || !uid) return;
+        var k = b.dataset.k, r = vstate.round;
+        myVote = k; renderVoter();
+        db.ref('votes/' + r + '/' + uid).set(k).catch(function(){ live.error = 'Tu voto no se guardó. Intenta de nuevo.'; renderVoter(); });
+      };
+    });
+    var rl = box.querySelector('[data-reload]'); if (rl) rl.onclick = function(){ location.reload(); };
+  }
+
+  /* ---------- Motor ---------- */
+  var current = null, sceneEl = null, steps = [], idx = 0, hist = [];
+
+  function build(id){
+    var sc = S[id];
+    var el = document.createElement('section');
+    el.className = 'scene' + (sc.cls ? ' ' + sc.cls : '');
+    var h = '<div class="inner">';
+    if (sc.t) h += '<p class="ts"><b>' + sc.t + '</b><span>' + sc.ap + '</span><span class="day">' + (sc.day || 'Lunes') + '</span></p>';
+    h += val(sc.html);
+    if (sc.choices){
+      var lv = live.ready;
+      h += '<div class="step fork-wrap">' +
+        (lv ? '<div class="vhead no-adv"><div class="qrmini" data-qr></div><p class="vstat">Abriendo votación…</p></div>'
+            : (sc.hint ? '<p class="hint">' + sc.hint + '</p>' : '')) +
+        '<div class="fork">' +
+        sc.choices.map(function(c, i){
+          return '<button class="opt" data-choice="' + i + '"><kbd class="k">' + (i + 1) + '</kbd>' +
+            '<span class="n"><small>Opción</small>' + (i + 1) + '</span><span class="t">' + c.label + '</span>' +
+            (lv ? '<span class="vbar"><i></i></span><span class="vc">0 votos · 0%</span>' : '') + '</button>';
+        }).join('') + '</div>' + (lv ? '<div class="vctl"></div>' : '') + '</div>';
+    }
+    if (sc.pills){
+      h += '<div class="step pills">' + (sc.hint ? '<p class="hint">' + sc.hint + '</p>' : '') +
+        sc.pills.map(function(c){ return '<button class="pill" data-to="' + c.to + '">' + c.label + '</button>'; }).join('') + '</div>';
+    }
+    if (sc.actions){
+      h += '<div class="step pills">' + sc.actions.map(function(a){
+        return '<button class="pill' + (a.primary ? ' primary' : '') + '" data-to="' + a.to + '"' + (a.reset ? ' data-reset' : '') + '>' + a.label + '</button>';
+      }).join('') + '</div>';
+    }
+    h += '</div>';
+    el.innerHTML = h;
+    return el;
+  }
+
+  function show(id, opts){
+    opts = opts || {};
+    var sc = S[id]; if (!sc) return;
+    if (opts.push !== false && current) hist.push({id:current, st:snap()});
+    current = id;
+    if (vote && vote.scene !== id) stopVote();
+
+    var sky = val(sc.sky);
+    if (sky) body.dataset.sky = sky; else delete body.dataset.sky;
+    var path = sc.path || (sc.story ? level() : '');
+    if (path) body.dataset.path = path; else delete body.dataset.path;
+    chip.classList.toggle('show', !!sc.story);
+
+    var el = build(id);
+    if (sceneEl){
+      var old = sceneEl;
+      old.classList.remove('active'); old.classList.add('leaving');
+      setTimeout(function(){ if (old.parentNode) old.parentNode.removeChild(old); }, 500);
+    }
+    stage.appendChild(el);
+    sceneEl = el;
+    drawQRs(el);
+    push();
+
+    steps = Array.prototype.slice.call(el.querySelectorAll('.step'));
+    if (steps.some(function(s){ return s.dataset.o; })){
+      steps.sort(function(a, b){ return (+a.dataset.o || 99) - (+b.dataset.o || 99); });
+    }
+    idx = 0;
+
+    Array.prototype.forEach.call(el.querySelectorAll('.count'), function(c){
+      if (!c.closest('.step')) count(c, opts.instant);
+    });
+
+    if (opts.instant){
+      el.classList.add('instant');
+      while (idx < steps.length) revealNext(true);
+      requestAnimationFrame(function(){ el.classList.remove('instant'); });
+    }
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add('active'); }); });
+  }
+
+  function revealNext(instant){
+    var s = steps[idx++];
+    s.classList.add('on');
+    if (s.classList.contains('fork-wrap') && live.ready) openVote();
+    Array.prototype.forEach.call(s.querySelectorAll('.count'), function(c){ count(c, instant); });
+    if (s.classList.contains('count')) count(s, instant);
+    var sc = S[current];
+    if (sc.onStep) sc.onStep(sceneEl, idx, instant);
+    if (!instant && s.scrollIntoView && !s.classList.contains('blackout')){
+      try { s.scrollIntoView({block:'nearest', behavior: reduce ? 'auto' : 'smooth'}); } catch (e) {}
+    }
+  }
+
+  function advance(){
+    if (!current) return;
+    if (idx < steps.length){ revealNext(false); return; }
+    var sc = S[current];
+    if (sc.choices && vote && vote.scene === current){
+      if (vote.open) return setOpen(false);
+      var w = winner();
+      return w !== -1 ? choose(w) : nudge();
+    }
+    var nx = val(sc.next);
+    if (nx) show(nx);
+    else if (sc.choices || sc.pills) nudge();
+  }
+
+  function back(){
+    if (!hist.length) return;
+    var h = hist.pop();
+    state = h.st;
+    refreshMeter(0);
+    show(h.id, {instant:true, push:false});
+  }
+
+  function choose(i){
+    var sc = S[current]; if (!sc || !sc.choices) return;
+    var c = sc.choices[i]; if (!c) return;
+    hist.push({id:current, st:snap()});
+    var add = c.p || 0;
+    state.p += add;
+    if (c.set) for (var k in c.set) state[k] = c.set[k];
+    state.log.push({t: sc.t + ' ' + sc.ap, txt: c.log, p: add});
+    lastPick = {txt: c.log, p: add};
+    refreshMeter(add);
+    show(c.to, {push:false});
+  }
+
+  function restart(){ hist = []; state = fresh(); lastPick = null; refreshMeter(0); show('s1', {push:false}); }
+
+  function activate(b){
+    b.blur();
+    if (b.hasAttribute('data-vote')){
+      var a = b.dataset.vote;
+      if (a === 'close') setOpen(false);
+      else if (a === 'reopen') setOpen(true);
+      else if (a === 'go' && winner() !== -1) choose(winner());
+      return;
+    }
+    if (b.hasAttribute('data-choice')) return choose(+b.dataset.choice);
+    if (b.hasAttribute('data-calc')) return calc();
+    var to = b.dataset.to; if (!to) return;
+    if (to === 's1') return restart();
+    if (b.hasAttribute('data-reset')){
+      hist.push({id:current, st:snap()});
+      state = fresh();
+      lastPick = null;
+      refreshMeter(0);
+      return show(to, {push:false});
+    }
+    show(to);
+  }
+
+  function refreshMeter(added){
+    var p = Math.min(state.p, 6);
+    Array.prototype.forEach.call(segs, function(s, i){
+      s.classList.toggle('fill', i < p);
+      if (added > 0 && !reduce && i >= p - added && i < p){
+        s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop');
+      }
+    });
+    meter.setAttribute('aria-label', 'Presión: ' + p + ' de 6');
+    if (added > 0 && !reduce){
+      var plus = document.createElement('span');
+      plus.className = 'plus';
+      plus.textContent = '+' + added;
+      meter.appendChild(plus);
+      setTimeout(function(){ if (plus.parentNode) plus.parentNode.removeChild(plus); }, 1400);
+    }
+  }
+
+  function nudge(){
+    var c = sceneEl && sceneEl.querySelector('.fork, .pills');
+    if (c && c.animate && !reduce){
+      c.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}], {duration:360});
+    }
+  }
+
+  function count(el, instant){
+    var to = +el.dataset.count;
+    if (instant || reduce){ el.textContent = to; return; }
+    var token = {}; el._tok = token;
+    var t0 = performance.now(), dur = 1300;
+    el.textContent = '0';
+    function tick(t){
+      if (el._tok !== token) return;
+      var pr = Math.min(1, (t - t0) / dur);
+      var e = 1 - Math.pow(1 - pr, 3);
+      el.textContent = Math.round(to * e);
+      if (pr < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function quake(){
+    if (reduce) return;
+    stage.classList.remove('quake');
+    void stage.offsetWidth;
+    stage.classList.add('quake');
+  }
+
+  function fmt(v){ return (Math.round(v * 10) / 10).toString().replace('.', ','); }
+
+  function calc(){
+    if (!sceneEl) return;
+    var inp = sceneEl.querySelector('#hrs');
+    var out = sceneEl.querySelector('.out');
+    if (!inp || !out) return;
+    var v = parseFloat(String(inp.value).replace(',', '.'));
+    if (!(v > 0)){
+      out.textContent = 'Escribe un número de horas mayor que 0.';
+      inp.focus();
+      return;
+    }
+    v = Math.min(v, 168);
+    var n = Math.round(v);
+    Array.prototype.forEach.call(sceneEl.querySelectorAll('.grid168 i'), function(c, i){
+      c.style.transitionDelay = reduce ? '0ms' : (i * 7) + 'ms';
+      c.classList.toggle('fill', i < n);
+    });
+    var pct = Math.round(v / 168 * 100);
+    var awake = Math.min(100, Math.round(v / 112 * 100));
+    out.innerHTML = '<b>' + fmt(v) + ' horas</b> son el <b>' + pct + '%</b> de su semana.<br>' +
+      '<span class="soft">Si duermen unas 8 horas al día, es el <b>' + awake + '%</b> del tiempo que pasan despiertos.</span>';
+    inp.blur();
+  }
+
+  /* ---------- Controles ---------- */
+  var lastSwipe = 0;
+
+  stage.addEventListener('click', function(e){
+    if (Date.now() - lastSwipe < 500) return;
+    var b = e.target.closest('[data-choice], [data-to], [data-calc], [data-vote]');
+    if (b){ activate(b); return; }
+    if (e.target.closest('button, input, label, a, .no-adv')) return;
+    var sel = window.getSelection && String(window.getSelection());
+    if (sel && sel.length) return;
+    advance();
+  });
+
+  var tx = null, ty = null;
+  stage.addEventListener('touchstart', function(e){ var t = e.touches[0]; tx = t.clientX; ty = t.clientY; }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if (tx === null) return;
+    var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    tx = null;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      lastSwipe = Date.now();
+      if (dx < 0) advance(); else back();
+    }
+  }, {passive:true});
+
+  document.addEventListener('keydown', function(e){
+    if (VOTER || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t.matches && t.matches('input, textarea')){
+      if (e.key === 'Enter'){ e.preventDefault(); calc(); }
+      else if (e.key === 'Escape') t.blur();
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && t.closest && t.closest('button')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'Enter'){ e.preventDefault(); advance(); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace'){ e.preventDefault(); back(); }
+    else if (k === '1' || k === '2'){
+      var btns = sceneEl ? sceneEl.querySelectorAll('.step.on [data-choice], .step.on [data-to]') : [];
+      var b = btns[+k - 1];
+      if (b) activate(b);
+    }
+    else if (k === 'f' || k === 'F') toggleFs();
+    else if (k === 't' || k === 'T') toggleTheme();
+    else if (k === 'q' || k === 'Q') toggleQR();
+    else if (k === 'Escape' && qrOver) toggleQR();
+    else if (k === 'Home') restart();
+  });
+
+  function toggleFs(){
+    try {
+      if (!document.fullscreenElement){
+        var p = root.requestFullscreen && root.requestFullscreen();
+        if (p && p.catch) p.catch(function(){});
+      } else if (document.exitFullscreen){
+        var q = document.exitFullscreen();
+        if (q && q.catch) q.catch(function(){});
+      }
+    } catch (e) {}
+  }
+
+  function currentTheme(){
+    if (root.dataset.theme === 'light' || root.dataset.theme === 'dark') return root.dataset.theme;
+    return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function toggleTheme(){
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('juan-theme', next); } catch (e) {}
+  }
+
+  function wire(id, fn){
+    var b = document.getElementById(id);
+    b.addEventListener('click', function(){ fn(); b.blur(); });
+  }
+  window.addEventListener('hashchange', function(){ location.reload(); });
+
+  if (VOTER){
+    document.getElementById('app').hidden = true;
+    document.getElementById('vote').hidden = false;
+    body.classList.add('is-voter');
+    renderVoter();
+    startLive();
+    return;
+  }
+
+  wire('nextBtn', advance);
+  wire('prevBtn', back);
+  wire('fsBtn', toggleFs);
+  wire('themeBtn', toggleTheme);
+
+  show('s1', {push:false});
+  liveChanged();
+  startLive();
+})();
+</script>
+</body>
+</html>
