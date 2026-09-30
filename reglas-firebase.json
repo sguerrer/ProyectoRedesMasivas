@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "state": {
+      ".read": true,
+      ".write": "auth != null && (!data.exists() || data.child('hostUid').val() === auth.uid) && newData.child('hostUid').val() === auth.uid"
+    },
+    "votes": {
+      ".read": true,
+      "$round": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.isString() && (newData.val() === 'A' || newData.val() === 'B')"
+        }
+      }
+    },
+    "presence": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}

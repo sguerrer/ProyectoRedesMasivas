@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Estación Aurora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: consola de mando — escena grande a la izquierda, panel de votación con QR a la derecha; en celular, una columna con dos botones enormes */
+:root {
+  --void: #0b1020;
+  --hull: #141b31;
+  --hull-2: #1c2542;
+  --line: #2a3558;
+  --ink: #e8ecf8;
+  --ink-dim: #9aa5c4;
+  --opt-a: #4fc3d9;
+  --opt-b: #f2a541;
+  --alert: #ff6b5a;
+  --ok: #7bd88f;
+  --f-display: "Chakra Petch", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--void);
+  background-image: radial-gradient(circle at 80% -10%, #1d2a55 0%, transparent 55%);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding-block: 20px 40px; padding-inline: 20px; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.brand { font-family: var(--f-display); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 15px; color: var(--ink-dim); }
+.brand b { color: var(--ink); }
+.log { font-family: var(--f-mono); font-size: 12px; color: var(--ink-dim); letter-spacing: .04em; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 12px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-dim); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-dim); }
+.chip.live .dot { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.chip.closed .dot { background: var(--alert); }
+.linkbtn { background: none; border: 0; color: var(--ink-dim); text-decoration: underline; font-size: 13px; padding: 4px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.scene { min-width: 0; }
+.kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--alert); margin: 0 0 8px; }
+.scene h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 4.2vw, 48px); line-height: 1.08; margin: 0 0 16px; text-wrap: balance; }
+.art { font-size: clamp(44px, 6vw, 64px); line-height: 1; margin-bottom: 12px; }
+.story { font-size: clamp(17px, 1.6vw, 21px); max-width: 62ch; color: var(--ink); margin: 0 0 24px; }
+.story p { margin: 0 0 12px; }
+
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
+.opt {
+  position: relative; text-align: left; color: var(--ink);
+  background: var(--hull); border: 2px solid var(--line); border-radius: 14px;
+  padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0;
+}
+.opt .letter { font-family: var(--f-display); font-weight: 700; font-size: 14px; letter-spacing: .1em; }
+.opt[data-k="A"] .letter { color: var(--opt-a); }
+.opt[data-k="B"] .letter { color: var(--opt-b); }
+.opt .label { font-family: var(--f-display); font-weight: 500; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.25; }
+.bar { height: 10px; background: var(--hull-2); border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; border-radius: 99px; transition: width .4s ease; }
+.opt[data-k="A"] .bar i { background: var(--opt-a); }
+.opt[data-k="B"] .bar i { background: var(--opt-b); }
+.count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+.opt.win[data-k="A"] { border-color: var(--opt-a); box-shadow: 0 0 0 4px color-mix(in srgb, var(--opt-a) 25%, transparent); }
+.opt.win[data-k="B"] { border-color: var(--opt-b); box-shadow: 0 0 0 4px color-mix(in srgb, var(--opt-b) 25%, transparent); }
+.opt.lose { opacity: .45; }
+.opt.pickable { cursor: pointer; }
+.opt.pickable:hover { border-color: var(--ink-dim); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; align-items: center; }
+.btn { border: 0; border-radius: 10px; padding: 12px 18px; font-family: var(--f-display); font-weight: 700; letter-spacing: .04em; background: var(--ink); color: var(--void); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn:disabled { opacity: .4; cursor: default; }
+.note { font-size: 14px; color: var(--ink-dim); }
+
+.panel { background: var(--hull); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+.panel h2 { font-family: var(--f-display); font-size: 20px; margin: 0; }
+.qr { background: #ffffff; padding: 12px; border-radius: 12px; width: 232px; max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; }
+.qr img, .qr canvas { display: block; width: 100% !important; height: auto !important; }
+.qr .noqr { color: #0b1020; font-size: 13px; padding: 12px; }
+.big { font-family: var(--f-display); font-weight: 700; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.small { font-size: 13px; color: var(--ink-dim); }
+.testrow { display: flex; gap: 8px; }
+.testrow button { background: var(--hull-2); color: var(--ink-dim); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+
+.path { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; padding: 0; list-style: none; }
+.path li { font-family: var(--f-mono); font-size: 12px; padding: 4px 10px; border-radius: 8px; background: var(--hull-2); color: var(--ink-dim); }
+.path li b { color: var(--ink); font-weight: 500; }
+
+.ending { border: 2px solid var(--ok); border-radius: 16px; padding: 20px; background: color-mix(in srgb, var(--ok) 8%, var(--hull)); }
+.ending .kicker { color: var(--ok); }
+
+/* Vista de votante (celular) */
+.voter { max-width: 560px; margin: 0 auto; }
+.voter .options { grid-template-columns: 1fr; }
+.voter .opt { padding: 20px; min-height: 92px; cursor: pointer; }
+.voter .opt.mine[data-k="A"] { border-color: var(--opt-a); background: color-mix(in srgb, var(--opt-a) 14%, var(--hull)); }
+.voter .opt.mine[data-k="B"] { border-color: var(--opt-b); background: color-mix(in srgb, var(--opt-b) 14%, var(--hull)); }
+.voter .opt:disabled { cursor: default; }
+.status { margin-top: 16px; padding: 12px 14px; border-radius: 10px; background: var(--hull-2); font-size: 15px; }
+.waiting { text-align: center; padding-block: 48px; }
+.waiting .art { font-size: 56px; }
+
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+<style>body{margin:0} [hidden]{display:none!important} img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="topbar">
+    <div class="brand"><b>Estación Aurora</b> · <span id="modeLabel">historia en vivo</span></div>
+    <span class="chip" id="conn"><span class="dot"></span><span id="connTxt">Conectando…</span></span>
+  </div>
+  <main id="view"></main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const STORY = {
+  s1: {
+    kicker: "Registro 01 · 03:12 hora de la estación",
+    title: "Pixel despierta en la oscuridad",
+    art: "🤖",
+    text: [
+      "Pixel es el robot de mantenimiento más pequeño de la Estación Aurora. Esta noche lo despierta una alarma: las luces se apagaron y la estación empezó a girar más lento de lo normal.",
+      "En su pantalla aparecen dos rutas marcadas en rojo. No hay tiempo para revisar las dos."
+    ],
+    options: { A: { label: "Ir al puente de mando", next: "s2a" }, B: { label: "Bajar a la sala de máquinas", next: "s2b" } }
+  },
+  s2a: {
+    kicker: "Registro 02 · Puente de mando",
+    title: "La capitana está atrapada",
+    art: "🧑‍🚀",
+    text: [
+      "La capitana Vega quedó atrapada bajo un panel que se desprendió del techo. Con la voz cortada, le dice a Pixel que un asteroide viene directo hacia la estación.",
+      "El timón está a tres metros. Pixel solo puede hacer una cosa a la vez."
+    ],
+    options: { A: { label: "Liberar a la capitana primero", next: "s3a" }, B: { label: "Tomar el timón y desviar la estación", next: "s3b" } }
+  },
+  s2b: {
+    kicker: "Registro 02 · Sala de máquinas",
+    title: "El reactor chisporrotea",
+    art: "⚡",
+    text: [
+      "El reactor está inestable y el medidor sube hacia la zona roja. Detrás de una tubería, Pixel escucha un maullido: es Miso, el gato de la tripulación, temblando de miedo.",
+      "Las cápsulas de escape están al final del pasillo."
+    ],
+    options: { A: { label: "Quedarse a reparar el reactor", next: "s3a" }, B: { label: "Rescatar a Miso y correr a las cápsulas", next: "s3b" } }
+  },
+  s3a: {
+    kicker: "Registro 03 · Energía restablecida",
+    title: "El escudo necesita una mano afuera",
+    art: "🛰️",
+    text: [
+      "La energía vuelve y las luces se encienden una por una. Pero el escudo frontal no responde: un cable se soltó en la parte exterior del casco.",
+      "Alguien tiene que arreglarlo antes de que llegue el asteroide. En el sótano hay una IA antigua, ORÁCULO, que nadie ha encendido en veinte años."
+    ],
+    options: { A: { label: "Salir al espacio a reparar el cable", next: "e1" }, B: { label: "Despertar a ORÁCULO y pedirle ayuda", next: "e2" } }
+  },
+  s3b: {
+    kicker: "Registro 03 · Señal desconocida",
+    title: "Alguien llama desde afuera",
+    art: "📡",
+    text: [
+      "El asteroide pasa rozando la estación. En medio del silencio, la radio capta una señal extraña: tres pitidos cortos y uno largo, repitiéndose.",
+      "Podría ser un rescate. También podría ser algo que nadie ha visto antes."
+    ],
+    options: { A: { label: "Responder a la señal", next: "e3" }, B: { label: "Apagar la radio y esperar", next: "e4" } }
+  },
+  e1: {
+    kicker: "Final · El pequeño héroe",
+    title: "Pixel repara el escudo",
+    art: "🌍",
+    ending: true,
+    text: [
+      "Pixel sale al espacio con sus imanes pegados al casco. Suelda el cable justo cuando el escudo se enciende y el asteroide se desvía en una lluvia de chispas.",
+      "Desde la ventana, toda la tripulación lo ve flotando con la Tierra de fondo. Desde ese día le dicen Capitán Pixel."
+    ]
+  },
+  e2: {
+    kicker: "Final · Trabajo en equipo",
+    title: "ORÁCULO despierta",
+    art: "🧠",
+    ending: true,
+    text: [
+      "ORÁCULO abre un ojo verde y parpadea. Tiene mapas y cálculos que nadie recordaba; Pixel tiene brazos y ruedas. Juntos redirigen la energía y el escudo resiste.",
+      "Ahora la estación tiene dos guardianes: uno que piensa y otro que actúa."
+    ]
+  },
+  e3: {
+    kicker: "Final · Nuevos amigos",
+    title: "No estaban solos",
+    art: "👽",
+    ending: true,
+    text: [
+      "Pixel responde con los mismos pitidos. Del otro lado aparece una nave diminuta, llena de robots de mantenimiento como él, perdidos desde hace años.",
+      "La Estación Aurora gana una tripulación nueva, y Pixel, por primera vez, tiene amigos de su tamaño."
+    ]
+  },
+  e4: {
+    kicker: "Final · El misterio continúa",
+    title: "A salvo… por ahora",
+    art: "🌑",
+    ending: true,
+    text: [
+      "Pixel apaga la radio y la estación queda a la deriva, tranquila y a salvo. La tripulación duerme.",
+      "Pero a las 04:44, en una pantalla que nadie mira, la señal vuelve a aparecer. Esta vez más cerca."
+    ]
+  }
+};
+
+
+/* =====================================================================
+   1) PEGA AQUÍ LA CONFIGURACIÓN DE TU PROYECTO DE FIREBASE
+      (Consola de Firebase > Configuración del proyecto > Tus apps > Web)
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyDl3kxlkXqTpkkcylqONFxXdZdLEtZfJGw",
+  authDomain: "redessociales-eee90.firebaseapp.com",
+  databaseURL: "https://redessociales-eee90-default-rtdb.firebaseio.com",
+  projectId: "redessociales-eee90",
+  storageBucket: "redessociales-eee90.firebasestorage.app",
+  messagingSenderId: "252400508869",
+  appId: "1:252400508869:web:ec20f557528c9954b635ac"
+};
+/* ===================================================================== */
+
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const CONFIGURED = !String(firebaseConfig.apiKey).includes("PEGA_AQUI") && !String(firebaseConfig.databaseURL).includes("PEGA_AQUI");
+const IS_HOST = location.hash.replace("#", "").toLowerCase() === "presentador";
+const VOTE_URL = location.origin + location.pathname;
+
+let db = null, uid = null, connected = false;
+let blocked = false;          // otro dispositivo ya es el presentador
+let errorMsg = "";
+
+let state = null;            // estado compartido: {hostUid, scene, round, open, path, final}
+let counts = { A: 0, B: 0 };
+let online = 0;
+let testVotes = { A: 0, B: 0 };
+let myVote = null;
+
+let votesRef = null, myVoteRef = null;
+
+/* ---------------- Firebase ---------------- */
+function start() {
+  if (!CONFIGURED) {
+    // Modo ensayo local: solo el presentador, con votos de prueba.
+    state = { scene: "s1", round: 1, open: true, path: [], final: null };
+    render(); setConn();
+    return;
+  }
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  } catch (e) { errorMsg = "La configuración de Firebase no es válida. Revisa los datos pegados en el archivo."; render(); return; }
+
+  db.ref(".info/connected").on("value", (s) => { connected = !!s.val(); setConn(); });
+
+  firebase.auth().signInAnonymously().catch((e) => {
+    errorMsg = "No se pudo iniciar la sesión anónima. Revisa que el acceso Anónimo esté activado en Firebase (Authentication).";
+    render();
+  });
+
+  firebase.auth().onAuthStateChanged(async (u) => {
+    if (!u) return;
+    uid = u.uid;
+
+    // Contador de personas conectadas
+    const me = db.ref("presence/" + uid);
+    db.ref(".info/connected").on("value", (s) => {
+      if (!s.val()) return;
+      me.onDisconnect().remove();
+      me.set(IS_HOST ? "host" : "voter");
+    });
+    db.ref("presence").on("value", (s) => {
+      let n = 0; s.forEach((c) => { if (c.val() === "voter") n++; }); online = n; schedule();
+    });
+
+    if (IS_HOST) {
+      try {
+        const snap = await db.ref("state").get();
+        const cur = snap.val();
+        if (cur && cur.hostUid && cur.hostUid !== uid) { blocked = true; render(); return; }
+        if (!cur || !cur.scene) await writeState({ scene: "s1", round: 1, open: true, path: [], final: null });
+      } catch (e) {
+        errorMsg = "No se pudo leer la base de datos. Revisa que pegaste las reglas de la guía.";
+        render(); return;
+      }
+    }
+
+    db.ref("state").on("value", (s) => {
+      const v = s.val();
+      const prevRound = state ? state.round : null;
+      state = v ? { ...v, path: v.path ? Object.values(v.path) : [] } : null;
+      if (state && state.round !== prevRound) watchRound(state.round);
+      schedule();
+    }, () => { errorMsg = "Sin permiso para leer la historia. Revisa las reglas de la base de datos."; render(); });
+  });
+}
+
+function watchRound(round) {
+  if (votesRef) votesRef.off();
+  if (myVoteRef) myVoteRef.off();
+  counts = { A: 0, B: 0 }; myVote = null;
+  votesRef = db.ref("votes/" + round);
+  votesRef.on("value", (s) => {
+    const c = { A: 0, B: 0 };
+    s.forEach((v) => { const k = v.val(); if (k === "A" || k === "B") c[k]++; });
+    counts = c; schedule();
+  });
+  myVoteRef = db.ref("votes/" + round + "/" + uid);
+  myVoteRef.on("value", (s) => { myVote = s.val(); schedule(); });
+}
+
+function writeState(next) {
+  const full = { hostUid: uid, ...next, path: next.path || [], final: next.final || null };
+  if (!db) { state = full; render(); setConn(); return Promise.resolve(); }
+  return db.ref("state").set(full).catch(() => { errorMsg = "No se pudo guardar el avance. ¿Otro dispositivo es el presentador?"; render(); });
+}
+
+function tally() { return { A: counts.A + testVotes.A, B: counts.B + testVotes.B }; }
+
+/* ---------------- Vista del presentador ---------------- */
+function renderHost() {
+  if (blocked) {
+    $("#view").innerHTML = `<div class="voter waiting"><div class="art">🔒</div><h1 style="font-family:var(--f-display)">Ya hay un presentador</h1>
+      <p class="note">Esta historia ya se está presentando desde otro dispositivo o navegador. Para presentar desde aquí, borra el nodo <b>state</b> en la base de datos de Firebase y recarga esta página.</p></div>`;
+    return;
+  }
+  if (!state) { $("#view").innerHTML = `<div class="voter waiting"><div class="art">🛰️</div><p class="note">Cargando…</p></div>`; return; }
+  const s = STORY[state.scene] || STORY.s1;
+  const c = tally();
+  const total = c.A + c.B;
+  const pct = (n) => (total ? Math.round((n / total) * 100) : 0);
+  const winner = !state.open && !s.ending ? (state.final || (c.A > c.B ? "A" : c.B > c.A ? "B" : null)) : null;
+  const tie = !state.open && !s.ending && !winner;
+
+  const pathHtml = state.path.length
+    ? `<ol class="path">${state.path.map((p, i) => `<li>${i + 1}. <b>${esc(STORY[p.scene].options[p.choice].label)}</b></li>`).join("")}</ol>`
+    : "";
+
+  let body;
+  if (s.ending) {
+    body = `${pathHtml}
+      <div class="ending">
+        <p class="kicker">${esc(s.kicker)}</p>
+        <div class="art">${s.art}</div>
+        <h1>${esc(s.title)}</h1>
+        <div class="story">${s.text.map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+      </div>
+      <div class="controls"><button class="btn" id="restart">Empezar de nuevo</button></div>`;
+  } else {
+    const optHtml = ["A", "B"].map((k) => {
+      const cls = ["opt"];
+      if (winner) cls.push(winner === k ? "win" : "lose");
+      if (tie) cls.push("pickable");
+      return `<button class="${cls.join(" ")}" data-k="${k}" ${tie ? "" : 'tabindex="-1"'}>
+        <span class="letter">OPCIÓN ${k}</span>
+        <span class="label">${esc(s.options[k].label)}</span>
+        <span class="bar"><i style="width:${pct(c[k])}%"></i></span>
+        <span class="count">${c[k]} ${c[k] === 1 ? "voto" : "votos"} · ${pct(c[k])}%</span>
+      </button>`;
+    }).join("");
+
+    let ctrl;
+    if (state.open) ctrl = `<button class="btn" id="close">Cerrar votación</button><span class="note">${total} ${total === 1 ? "voto" : "votos"} hasta ahora</span>`;
+    else if (tie) ctrl = `<button class="btn ghost" id="reopen">Reabrir votación</button><span class="note">Empate. Toca la opción que decides que gana.</span>`;
+    else ctrl = `<button class="btn" id="next">Continuar con la opción ${winner}</button><button class="btn ghost" id="reopen">Reabrir votación</button>`;
+
+    body = `${pathHtml}
+      <p class="kicker">${esc(s.kicker)}</p>
+      <div class="art">${s.art}</div>
+      <h1>${esc(s.title)}</h1>
+      <div class="story">${s.text.map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+      <div class="options">${optHtml}</div>
+      <div class="controls">${ctrl}</div>`;
+  }
+
+  const setupNote = CONFIGURED ? "" : `<p class="small">Modo ensayo: falta pegar la configuración de Firebase. Los votos del público aún no llegan.</p>`;
+
+  $("#view").innerHTML = `
+    <div class="grid">
+      <section class="scene">${body}</section>
+      <aside class="panel">
+        <h2>Escanea para votar</h2>
+        <div class="qr" id="qr"></div>
+        <div class="small" style="word-break:break-all">${esc(VOTE_URL)}</div>
+        <div><div class="big">${online}</div><div class="small">${online === 1 ? "persona conectada" : "personas conectadas"}</div></div>
+        ${setupNote}
+        <div class="small">Votos de prueba (solo en esta pantalla)</div>
+        <div class="testrow"><button id="tA">+1 A</button><button id="tB">+1 B</button><button id="t0">Borrar</button></div>
+      </aside>
+    </div>`;
+
+  drawQR();
+  bindHost(tie);
+}
+
+let qrCache = null;
+function drawQR() {
+  const el = $("#qr");
+  if (!el) return;
+  if (typeof QRCode === "undefined") { el.innerHTML = `<div class="noqr">${esc(VOTE_URL)}</div>`; return; }
+  if (!qrCache) {
+    const tmp = document.createElement("div");
+    try { new QRCode(tmp, { text: VOTE_URL, width: 512, height: 512, colorDark: "#0b1020", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M }); qrCache = tmp; }
+    catch (e) { el.innerHTML = `<div class="noqr">${esc(VOTE_URL)}</div>`; return; }
+  }
+  el.innerHTML = "";
+  el.appendChild(qrCache);
+}
+
+function bindHost(tie) {
+  const on = (id, fn) => { const b = document.getElementById(id); if (b) b.onclick = fn; };
+  on("close", () => writeState({ ...state, open: false, final: null }));
+  on("reopen", () => writeState({ ...state, open: true, final: null }));
+  on("next", advance);
+  on("restart", () => { testVotes = { A: 0, B: 0 }; writeState({ scene: "s1", round: state.round + 1, open: true, path: [], final: null }); });
+  on("tA", () => { testVotes.A++; render(); });
+  on("tB", () => { testVotes.B++; render(); });
+  on("t0", () => { testVotes = { A: 0, B: 0 }; render(); });
+  if (tie) document.querySelectorAll(".opt.pickable").forEach((b) => { b.onclick = () => writeState({ ...state, final: b.dataset.k }); });
+}
+
+function advance() {
+  const s = STORY[state.scene];
+  const c = tally();
+  const w = state.final || (c.A > c.B ? "A" : "B");
+  const nextScene = s.options[w].next;
+  testVotes = { A: 0, B: 0 };
+  if (!db) counts = { A: 0, B: 0 };
+  writeState({
+    scene: nextScene,
+    round: state.round + 1,
+    open: !STORY[nextScene].ending,
+    path: state.path.concat([{ scene: state.scene, choice: w }]),
+    final: null
+  });
+}
+
+/* ---------------- Vista del votante ---------------- */
+function renderVoter() {
+  if (!CONFIGURED) {
+    $("#view").innerHTML = `<div class="voter waiting"><div class="art">🛠️</div><h1 style="font-family:var(--f-display)">Falta configurar</h1><p class="note">Esta página todavía no tiene los datos de Firebase. Si eres el presentador, abre la dirección terminada en <b>#presentador</b> para ensayar.</p></div>`;
+    return;
+  }
+  if (!state || !STORY[state.scene]) {
+    $("#view").innerHTML = `<div class="voter waiting"><div class="art">🛰️</div><h1 style="font-family:var(--f-display)">Esperando al presentador</h1><p class="note">Deja esta página abierta. La historia aparece aquí en cuanto empiece.</p></div>`;
+    return;
+  }
+  const s = STORY[state.scene];
+  if (s.ending) {
+    $("#view").innerHTML = `<div class="voter"><div class="ending"><p class="kicker">${esc(s.kicker)}</p><div class="art">${s.art}</div><h1 style="font-family:var(--f-display)">${esc(s.title)}</h1><div class="story">${s.text.map((t) => `<p>${esc(t)}</p>`).join("")}</div></div><div class="status">Llegamos a un final. Mira la pantalla principal.</div></div>`;
+    return;
+  }
+  const opts = ["A", "B"].map((k) => `<button class="opt ${myVote === k ? "mine" : ""}" data-k="${k}" ${state.open ? "" : "disabled"}>
+      <span class="letter">OPCIÓN ${k}</span><span class="label">${esc(s.options[k].label)}</span></button>`).join("");
+  const status = !state.open
+    ? (state.final ? `La votación se cerró. Ganó la opción ${esc(state.final)}.` : "La votación se cerró. Mira la pantalla principal.")
+    : myVote ? `Votaste por la opción ${esc(myVote)}. Puedes cambiar tu voto mientras siga abierta.` : "Toca una opción para votar.";
+  $("#view").innerHTML = `<div class="voter">
+      <p class="kicker">${esc(s.kicker)}</p>
+      <h1 style="font-family:var(--f-display);font-size:28px;line-height:1.15;margin:0 0 12px">${s.art} ${esc(s.title)}</h1>
+      <div class="story" style="font-size:17px">${s.text.map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+      <div class="options">${opts}</div>
+      <div class="status">${status}</div>
+    </div>`;
+  document.querySelectorAll(".voter .opt").forEach((b) => {
+    b.onclick = () => {
+      if (!state.open || !uid) return;
+      const k = b.dataset.k;
+      myVote = k; renderVoter();
+      db.ref("votes/" + state.round + "/" + uid).set(k).catch(() => {
+        errorMsg = "Tu voto no se guardó. Intenta de nuevo.";
+        render();
+      });
+    };
+  });
+}
+
+/* ---------------- General ---------------- */
+function render() {
+  if (errorMsg) {
+    $("#view").innerHTML = `<div class="voter waiting"><div class="art">⚠️</div><h1 style="font-family:var(--f-display)">Algo falló</h1><p class="note">${esc(errorMsg)}</p><p><button class="btn ghost" id="dismiss">Reintentar</button></p></div>`;
+    const d = $("#dismiss"); if (d) d.onclick = () => { errorMsg = ""; render(); };
+    return;
+  }
+  if (IS_HOST) renderHost(); else renderVoter();
+}
+
+function setConn() {
+  const chip = $("#conn"), txt = $("#connTxt");
+  chip.classList.remove("live", "closed");
+  if (!CONFIGURED) { txt.textContent = "Modo ensayo"; chip.classList.add("closed"); return; }
+  if (!connected) { txt.textContent = "Conectando…"; return; }
+  if (IS_HOST && state && !state.open) { txt.textContent = "Votación cerrada"; chip.classList.add("closed"); }
+  else { txt.textContent = IS_HOST ? "Votación abierta" : "En vivo"; chip.classList.add("live"); }
+}
+
+let raf = 0;
+function schedule() { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; render(); setConn(); }); }
+
+window.addEventListener("hashchange", () => location.reload());
+$("#modeLabel").textContent = IS_HOST ? "presentador" : "votación";
+render(); setConn();
+start();
+</script>
+</body>
+</html>
