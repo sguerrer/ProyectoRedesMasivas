@@ -502,7 +502,7 @@ function renderVoter() {
 function render() {
   if (errorMsg) {
     $("#view").innerHTML = `<div class="voter waiting"><div class="art">⚠️</div><h1 style="font-family:var(--f-display)">Algo falló</h1><p class="note">${esc(errorMsg)}</p><p><button class="btn ghost" id="dismiss">Reintentar</button></p></div>`;
-    const d = $("#dismiss"); if (d) d.onclick = () => { errorMsg = ""; render(); };
+    const d = $("#dismiss"); if (d) d.onclick = () => location.reload();
     return;
   }
   if (IS_HOST) renderHost(); else renderVoter();
