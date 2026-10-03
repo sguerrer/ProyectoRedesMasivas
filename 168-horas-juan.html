@@ -475,7 +475,7 @@ body.is-voter{height:auto; min-height:100%; overflow:auto}
       '<p class="l2 soft step">Así que probemos algo.</p>'
     },
     s3: { hint:'Escucha sus respuestas y elige:', pills:[
-        {label:'🙋 Alguien respondió', to:'s4a'},
+        {label:'🙋 2...3 noticias', to:'s4a'},
         {label:'🦗 Nadie respondió', to:'s4b'}
       ], html:
       '<p class="qlabel"><span class="num">1</span>Pregunta para el grupo</p>' +
@@ -535,7 +535,7 @@ body.is-voter{height:auto; min-height:100%; overflow:auto}
     s10b: { story:true, next:function(){ return live.ready ? 'qr' : 's11'; }, html:
       '<p class="l2">Hoy, ustedes van a decidir por Juan.</p>' +
       '<p class="l3 step">Cada decisión puede sumarle presión. Vean el medidor de arriba.</p>' +
-      '<p class="l3 soft step">Hay cuatro finales posibles.</p>'
+      '<p class="l3 soft step">sus decisiones afectan el resultado.</p>'
     },
     qr: { story:true, next:'s11', html: function(){
       return '<div class="split"><div>' +
@@ -557,7 +557,7 @@ body.is-voter{height:auto; min-height:100%; overflow:auto}
         notif(4,'👀','Chismes','No vas a creer quién dejó de seguir a quién','9 min') +
         notif(5,'🥊','Famosos','Se armó el pleito en vivo','14 min') +
       '</div></div>' +
-      '<div class="shout step" data-o="7"><span class="who">Hasta que… se escucha a su mamá:</span><strong>¡JUAAAN, YA VA BIEN TARDE!</strong></div>',
+      '<div class="shout step" data-o="7"><span class="who">Hasta que… se escucha a su mamá:</span><strong>¡JUAAAN, YA ES BIEN TARDE!</strong></div>',
       onStep: function(el, n, instant){ if (n === 7 && !instant) quake(); }
     },
 
